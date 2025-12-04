@@ -164,12 +164,11 @@ export const ResourceCounterCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1em;
-  padding: 2em;
+  padding: 1em;
   background: rgba(255, 255, 255, 0.4);
   border-radius: 16px;
-  min-width: fit-content;
-  margin: 1em;
-  width: 24rem;
+  margin-bottom: 1em;
+  height: fit-content !important;
 
   @media (min-width: 768px) {
     padding: 1.25em;
@@ -183,9 +182,6 @@ export const FateCardSection = styled.div`
   padding: 1em;
   background: rgba(255, 255, 255, 0.4);
   border-radius: 16px;
-  min-width: fit-content;
-  margin: 1em;
-  width: 24rem;
   height: fit-content !important;
 
   @media (min-width: 768px) {
@@ -200,10 +196,7 @@ export const PlayerCardSection = styled.div`
   padding: 1em;
   background: rgba(255, 255, 255, 0.4);
   border-radius: 16px;
-  min-width: fit-content;
   overflow: auto;
-  margin: 1em;
-  width: 24rem;
   height: fit-content !important;
 
   @media (min-width: 768px) {

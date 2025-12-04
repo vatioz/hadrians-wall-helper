@@ -324,14 +324,12 @@ const App = () => {
                 ))}
             </Grid>
           </RoundTrackContainer>
-          <Grid container>
+          <Grid container spacing={2}>
             {/** Grid for Resource Counter and AI Card */}
             <Grid
               item
-              container
-              xs={4}
-              direction='column'
-              justifyContent='flex-start'
+              xs={12}
+              md={4}
             >
               <ResourceCounterPanel
                 resourceAmount={resourceAmount}
@@ -344,7 +342,7 @@ const App = () => {
                 randomOpponentCard={randomOpponentCard}
               />
             </Grid>
-            <Grid item container xs={4}>
+            <Grid item xs={12} md={4}>
               <FateCardSection key={`form-card-fate-card`}>
                 <Grid
                   item
@@ -386,7 +384,7 @@ const App = () => {
                   ))}
               </FateCardSection>
             </Grid>
-            <Grid item container xs={4}>
+            <Grid item xs={12} md={4}>
               <PlayerCardSection key={`form-card-fate-card`}>
                 <Grid
                   item

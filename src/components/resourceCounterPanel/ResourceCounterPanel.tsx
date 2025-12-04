@@ -1,7 +1,6 @@
 import React from 'react';
-import { ResourceCounterCard } from './style';
 import Grid from '@mui/material/Grid/Grid';
-import { AppPrimaryButton, AppPrimaryText } from '../../App.styled';
+import { AppPrimaryButton, AppPrimaryText, ResourceCounterCard } from '../../App.styled';
 import ResourceCounterSet from '../resourceCounterSet';
 
 interface Props {

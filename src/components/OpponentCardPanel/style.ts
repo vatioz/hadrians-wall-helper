@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 export const ResourceCounterCard = styled.div`
-  /* display: flex;
-  flex-direction: column; */
-  /* gap: 1em; */
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
   padding: 1.5em;
   background: rgba(255, 255, 255, 0.4);
   border-radius: 16px;
