@@ -182,16 +182,14 @@ const PlayerCardContainer: React.FC<Props> = ({
           <>
             <Grid item container direction='row'>
               <CardPrimaryButton
-                onClick={() => setBoughtGoods(true)}
-                disabled={isBoughtGoods}
+                onClick={() => setBoughtGoods(!isBoughtGoods)}
               >
-                Buy Goods
+                {isBoughtGoods ? '✓ Bought Goods' : 'Buy Goods'}
               </CardPrimaryButton>
               <CardPrimaryButton
-                onClick={() => setScout(true)}
-                disabled={isScout}
+                onClick={() => setScout(!isScout)}
               >
-                Scout
+                {isScout ? '✓ Scouted' : 'Scout'}
               </CardPrimaryButton>
             </Grid>
           </>
