@@ -2,6 +2,7 @@
   "name": "hadrians-wall-helper-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://vatioz.github.io/hadrians-wall-helper",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
@@ -27,7 +28,8 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "npm run build && gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -48,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "react-app-rewired": "^2.2.1"
   }
 }
