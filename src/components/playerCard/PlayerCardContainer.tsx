@@ -56,9 +56,8 @@ const ScoutContainer = (d: { scout: 'Line' | 'Square' | 'T' | 'L' | 'S' }) => {
 
 interface Props {
   card: PlayerCard;
-  addObjectiveCard: (card: PlayerCard) => void;
-  addResourceFromPlayerCard: (card: PlayerCard) => void;
-  addAICardFromPlayerCard: (card: PlayerCard) => void;
+  addObjectiveCard?: (card: PlayerCard) => void;
+  addResourceFromPlayerCard?: (card: PlayerCard) => void;
   isAI?: boolean;
   isPathFull?: boolean;
 }
@@ -67,7 +66,6 @@ const PlayerCardContainer: React.FC<Props> = ({
   card,
   addObjectiveCard,
   addResourceFromPlayerCard,
-  addAICardFromPlayerCard,
   isAI = false,
   isPathFull = false,
 }) => {
@@ -170,16 +168,13 @@ const PlayerCardContainer: React.FC<Props> = ({
         {!isAI && (
           <Grid item container direction='row'>
             <CardPrimaryButton
-              onClick={() => addObjectiveCard(card)}
+              onClick={() => addObjectiveCard && addObjectiveCard(card)}
               disabled={isPathFull}
             >
               As Path
             </CardPrimaryButton>
-            <CardPrimaryButton onClick={() => addResourceFromPlayerCard(card)}>
+            <CardPrimaryButton onClick={() => addResourceFromPlayerCard && addResourceFromPlayerCard(card)}>
               As Resource
-            </CardPrimaryButton>
-            <CardPrimaryButton onClick={() => addAICardFromPlayerCard(card)}>
-              As AI
             </CardPrimaryButton>
           </Grid>
         )}

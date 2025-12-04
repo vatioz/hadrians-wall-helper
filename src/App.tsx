@@ -20,10 +20,11 @@ import rounds from './settings/rounds';
 import { FateCard } from './settings/fateCards.model';
 import { PlayerCard } from './settings/playerCards.model';
 import playerCards from './settings/playerCards';
+import opponentCards from './settings/opponentCards';
 import PlayerCardContainer from './components/playerCard';
 import { nanoid } from 'nanoid';
 import ResourceCounterPanel from './components/resourceCounterPanel';
-import AICardPanel from './components/AICardPanel';
+import OpponentCardPanel from './components/OpponentCardPanel';
 
 const muiTheme = createTheme({
   typography: {
@@ -38,10 +39,13 @@ const App = () => {
   const [initialPlayerCards, setInitialPlayerCards] = useState<PlayerCard[]>(
     playerCards.sort(() => Math.random() - 0.5),
   );
+  const [initialOpponentCards, setInitialOpponentCards] = useState<PlayerCard[]>(
+    opponentCards.sort(() => Math.random() - 0.5),
+  );
   const [pickedFateCards, setPickedFateCards] = useState<FateCard[]>([]);
   const [pickedPlayerCards, setPickedPlayerCards] = useState<PlayerCard[]>([]);
+  const [pickedOpponentCards, setPickedOpponentCards] = useState<PlayerCard[]>([]);
   const [objectiveCards, setObjectiveCards] = useState<PlayerCard[]>([]);
-  const [AICards, setAICards] = useState<PlayerCard[]>([]);
   const [resourceAmount, setResourceAmount] = useState({
     black: 0,
     blue: 0,
@@ -109,6 +113,25 @@ const App = () => {
 
   const resetDrewPlayerCards = () => {
     setPickedPlayerCards([]);
+  };
+
+  const randomOpponentCard = () => {
+    if (initialOpponentCards.length === 0) {
+      const newSetOpponentCards = opponentCards.sort(() => Math.random() - 0.5);
+      const opponentCard = newSetOpponentCards[0];
+      setPickedOpponentCards([opponentCard, ...pickedOpponentCards]);
+      const afterRemovedInitialOpponentCards = newSetOpponentCards.slice(1);
+      setInitialOpponentCards(afterRemovedInitialOpponentCards);
+    } else {
+      const opponentCard = initialOpponentCards[0];
+      setPickedOpponentCards([opponentCard, ...pickedOpponentCards]);
+      const afterRemovedInitialOpponentCards = initialOpponentCards.slice(1);
+      setInitialOpponentCards(afterRemovedInitialOpponentCards);
+    }
+  };
+
+  const resetDrewOpponentCards = () => {
+    setPickedOpponentCards([]);
   };
 
   const addObjectiveCard = (card: PlayerCard) => {
@@ -181,15 +204,6 @@ const App = () => {
   const changeResourceAmountByKey = (key: string, amount: number) => {
     const newResourceAmount = { ...resourceAmount, [key]: amount };
     setResourceAmount(newResourceAmount);
-  };
-
-  const addAICardFromPlayerCard = (card: PlayerCard) => {
-    setAICards([...AICards, card]);
-    removePickedPlayerCards(card);
-  };
-
-  const clearAICards = () => {
-    setAICards([]);
   };
 
   function capitalizeFirstLetter(string: string) {
@@ -324,12 +338,10 @@ const App = () => {
                 resetResourceAmount={resetResourceAmount}
                 changeResourceAmountByKey={changeResourceAmountByKey}
               />
-              <AICardPanel
-                AICards={AICards}
-                clearAICards={clearAICards}
-                addObjectiveCard={addObjectiveCard}
-                addAICardFromPlayerCard={addAICardFromPlayerCard}
-                addResourceFromPlayerCard={addResourceFromPlayerCard}
+              <OpponentCardPanel
+                opponentCards={pickedOpponentCards}
+                clearOpponentCards={resetDrewOpponentCards}
+                randomOpponentCard={randomOpponentCard}
               />
             </Grid>
             <Grid item container xs={4}>
@@ -397,7 +409,6 @@ const App = () => {
                       card={card}
                       addObjectiveCard={addObjectiveCard}
                       addResourceFromPlayerCard={addResourceFromPlayerCard}
-                      addAICardFromPlayerCard={addAICardFromPlayerCard}
                       isPathFull={objectiveCards.length >= 6}
                     />
                   ))}
