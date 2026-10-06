@@ -107,21 +107,6 @@ const fateCards: FateCard[] = [
     ],
   },
   {
-    picts_direction: 'center',
-    goods: 3,
-    gladiator: 3,
-    resource: [
-      'black',
-      'blue',
-      'purple',
-      'purple',
-      'purple',
-      'yellow',
-      'yellow',
-      'brick',
-    ],
-  },
-  {
     picts_direction: 'left',
     goods: 1,
     gladiator: 3,

@@ -67,7 +67,7 @@ const opponentCards: PlayerCard[] = [
     score: {
       1: 1,
       3: 2,
-      4: 3,
+      5: 3,
     },
     resources: ['black'],
     goods: '6',

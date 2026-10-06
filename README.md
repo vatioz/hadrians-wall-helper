@@ -39,7 +39,8 @@ Run the automated tests once without watch mode, locally or in CI:
 npm test -- --watchAll=false
 ```
 
-Place tests next to their components using the `*.test.tsx` naming convention.
+Place tests next to their components or exported reference data using the
+`*.test.tsx` or `*.test.ts` naming convention.
 Use React Testing Library's `render` and `screen`, preferring role and accessible
 name queries for controls and visible text queries for content. Jest DOM matchers
 such as `toBeInTheDocument` are loaded automatically by `src/setupTests.ts`.
@@ -48,6 +49,9 @@ such as `toBeInTheDocument` are loaded automatically by `src/setupTests.ts`.
 mocking its components and checks that its title and card draw control appear.
 The Jest override in `config-overrides.js` enables Babel transformation for the
 ES-module dependencies used by the app (Material UI, Babel runtime, and nanoid).
+
+See the [rule-backed coverage checklist](docs/testing.md) for issue #12's
+Phase 1 checks, source pages, and unresolved reference gaps.
 
 ### Production Build
 
