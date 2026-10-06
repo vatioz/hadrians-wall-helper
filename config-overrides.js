@@ -7,3 +7,12 @@ module.exports = function override(config, env) {
   
   return config;
 };
+
+module.exports.jest = function overrideJest(config) {
+  config.transformIgnorePatterns = [
+    '[/\\\\]node_modules[/\\\\](?!(@mui[/\\\\]|@babel[/\\\\]runtime[/\\\\]|nanoid[/\\\\]))',
+    '^.+\\.module\\.(css|sass|scss)$',
+  ];
+
+  return config;
+};
