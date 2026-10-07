@@ -22,7 +22,6 @@ import { PlayerCard } from './settings/playerCards.model';
 import playerCards from './settings/playerCards';
 import opponentCards from './settings/opponentCards';
 import PlayerCardContainer from './components/playerCard';
-import { nanoid } from 'nanoid';
 import ResourceCounterPanel from './components/resourceCounterPanel';
 import OpponentCardPanel from './components/OpponentCardPanel';
 import { DrawnCard, useDeck } from './hooks/useDeck';
@@ -231,7 +230,7 @@ const App = () => {
                 changeResourceAmountByKey={changeResourceAmountByKey}
               />
               <OpponentCardPanel
-                opponentCards={opponentDeck.drawnCards.map((entry) => entry.card)}
+                opponentCards={opponentDeck.drawnCards}
                 clearOpponentCards={opponentDeck.clear}
                 randomOpponentCard={opponentDeck.draw}
               />
@@ -269,7 +268,7 @@ const App = () => {
                 </AppPrimaryButton>
                 {fateDeck.drawnCards.map((entry) => (
                     <FateCardContainer
-                      key={`${nanoid()}-card`}
+                      key={`fate-${entry.id}`}
                       card={entry.card}
                       addResourceFromFateCard={() => addResourceFromFateCard(entry)}
                       removePickedFateCards={() => fateDeck.discard(entry.id)}
@@ -295,7 +294,7 @@ const App = () => {
                 </AppPrimaryButton>
                 {playerDeck.drawnCards.map((entry) => (
                     <PlayerCardContainer
-                      key={`${nanoid()}-card`}
+                      key={`player-${entry.id}`}
                       card={entry.card}
                       addObjectiveCard={() => addObjectiveCard(entry)}
                       addResourceFromPlayerCard={() => addResourceFromPlayerCard(entry)}
