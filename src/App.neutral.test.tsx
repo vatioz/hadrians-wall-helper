@@ -66,7 +66,7 @@ test('Neutral uses accumulate across cards and cleanup preserves payments, Paths
   expect(screen.getByText('Left : 1')).toBeInTheDocument();
   expect(screen.getAllByRole('button', { name: 'Discard' })).toHaveLength(1);
 
-  userEvent.click(screen.getByRole('button', { name: 'Clear Opponent Cards' }));
+  userEvent.click(screen.getByRole('button', { name: 'Clear Neutral Cards' }));
   expect(screen.getByText('Extra Invasion Draws: 0')).toBeInTheDocument();
   expect(screen.queryByRole('region', { name: /Neutral card/ })).not.toBeInTheDocument();
   expect(brick.getByText('0')).toBeInTheDocument();

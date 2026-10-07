@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 import fateCards from './settings/fateCards';
@@ -142,7 +142,7 @@ test('all three deck controls draw and clear independently without restarting th
   expect(screen.getAllByText('Engineer')).toHaveLength(2);
   expect(screen.getByText('Left : 1')).toBeInTheDocument();
 
-  userEvent.click(screen.getByRole('button', { name: 'Clear Fate Cards' }));
+  userEvent.click(screen.getByRole('button', { name: 'Clear Invasion' }));
 
   expect(screen.queryByRole('button', { name: 'Discard' })).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'As Path' })).toBeInTheDocument();
@@ -160,7 +160,7 @@ test('all three deck controls draw and clear independently without restarting th
   expect(screen.getByRole('button', { name: 'Buy Goods' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Discard' })).toBeInTheDocument();
 
-  userEvent.click(screen.getByRole('button', { name: 'Clear Opponent Cards' }));
+  userEvent.click(screen.getByRole('button', { name: 'Clear Neutral Cards' }));
 
   expect(screen.queryByRole('button', { name: 'Buy Goods' })).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Discard' })).toBeInTheDocument();
@@ -187,10 +187,93 @@ test('normal game interactions do not emit debug output', () => {
   userEvent.click(screen.getByRole('button', { name: 'Draw Player Card' }));
   userEvent.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
   userEvent.click(screen.getAllByRole('button', { name: '+' })[0]);
-  userEvent.click(screen.getByRole('button', { name: 'Clear Fate Cards' }));
+  userEvent.click(screen.getByRole('button', { name: 'Clear Invasion' }));
   userEvent.click(screen.getByRole('button', { name: 'Clear Player Cards' }));
-  userEvent.click(screen.getByRole('button', { name: 'Clear Opponent Cards' }));
+  userEvent.click(screen.getByRole('button', { name: 'Clear Neutral Cards' }));
 
   expect(log).not.toHaveBeenCalled();
   expect(debug).not.toHaveBeenCalled();
+});
+
+test.each([
+  { name: 'Clear Player Cards', hint: 'Remove displayed Player cards for the next Year; keep Paths and the remaining deck.' },
+  { name: 'Clear Neutral Cards', hint: 'After resolving the invasion, remove Neutral cards, placements and extra draws. No refunds or reshuffling.' },
+  { name: 'Clear Invasion', hint: 'Remove revealed Fate cards and attack totals after resolving the invasion. Do not reshuffle the deck.' },
+  { name: 'Zero Resources', hint: 'Set available resource counters to zero; keep cards, Neutral placements and Paths.' },
+])('$name has an explicit visible label and explains cleanup on hover and focus', async ({ name, hint }) => {
+  render(<App />);
+  const control = screen.getByRole('button', { name });
+  expect(control).toHaveTextContent(name);
+  userEvent.hover(control);
+  expect(await screen.findByRole('tooltip')).toHaveTextContent(hint);
+  userEvent.unhover(control);
+  await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+  act(() => control.focus());
+  expect(await screen.findByRole('tooltip')).toHaveTextContent(hint);
+});
+
+test('cleanup controls preserve Paths and never refund Neutral payments or replenish decks', () => {
+  jest.spyOn(Math, 'random').mockReturnValue(0);
+  render(<App />);
+  userEvent.click(screen.getByRole('button', { name: 'Draw Player Card' }));
+  userEvent.click(screen.getByRole('button', { name: 'Draw Player Card' }));
+  userEvent.click(screen.getAllByRole('button', { name: 'As Path' })[0]);
+  userEvent.click(screen.getByRole('button', { name: 'Draw Fate Card' }));
+  userEvent.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
+  ['Brick', 'Black'].forEach((label) => {
+    const counter = within(screen.getByText(label).parentElement!);
+    userEvent.click(counter.getByRole('button', { name: '+' }));
+    userEvent.click(counter.getByRole('button', { name: '+' }));
+  });
+  userEvent.click(screen.getByRole('button', { name: 'Buy Goods' }));
+  userEvent.click(screen.getByRole('button', { name: 'Scout' }));
+
+  userEvent.click(screen.getByRole('button', { name: 'Zero Resources' }));
+  ['Black', 'Blue', 'Purple', 'Yellow', 'Brick'].forEach((label) => {
+    expect(within(screen.getByText(label).parentElement!).getByText('0')).toBeInTheDocument();
+  });
+  expect(screen.getByText('Resources placed: 1')).toBeInTheDocument();
+  expect(screen.getByText('Soldiers placed: 1')).toBeInTheDocument();
+  expect(screen.getByText('Extra Invasion Draws: 2')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'As Path' })).toBeInTheDocument();
+  expect(screen.getByText('Left : 1')).toBeInTheDocument();
+  expect(screen.getByText('Completed Citizen Tracks')).toBeInTheDocument();
+
+  userEvent.click(screen.getByRole('button', { name: 'Clear Player Cards' }));
+  expect(screen.queryByRole('button', { name: 'As Path' })).not.toBeInTheDocument();
+  expect(screen.getByText('Extra Invasion Draws: 2')).toBeInTheDocument();
+  expect(screen.getByText('Left : 1')).toBeInTheDocument();
+  expect(screen.getByText('Completed Citizen Tracks')).toBeInTheDocument();
+
+  userEvent.click(screen.getByRole('button', { name: 'Clear Invasion' }));
+  expect(screen.queryByRole('button', { name: 'Discard' })).not.toBeInTheDocument();
+  expect(screen.getByText('Left : 0')).toBeInTheDocument();
+  expect(screen.getByText('Extra Invasion Draws: 2')).toBeInTheDocument();
+
+  userEvent.click(screen.getByRole('button', { name: 'Clear Neutral Cards' }));
+  expect(screen.getByText('Extra Invasion Draws: 0')).toBeInTheDocument();
+  expect(screen.queryByRole('region', { name: /Neutral card/ })).not.toBeInTheDocument();
+  expect(screen.getByText('Completed Citizen Tracks')).toBeInTheDocument();
+  ['Brick', 'Black'].forEach((label) => {
+    expect(within(screen.getByText(label).parentElement!).getByText('0')).toBeInTheDocument();
+  });
+
+  userEvent.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
+  expect(screen.getByRole('region', { name: 'Neutral card Planner' })).toBeInTheDocument();
+  userEvent.click(screen.getByRole('button', { name: 'Draw Player Card' }));
+  expect(screen.getByText('Trainer')).toBeInTheDocument();
+  userEvent.click(screen.getByRole('button', { name: 'Draw Fate Card' }));
+  expect(screen.getByText('Right : 1')).toBeInTheDocument();
+});
+
+test('holding a cleanup button exposes its hint on touch without clearing cards', async () => {
+  render(<App />);
+  userEvent.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
+  const control = screen.getByRole('button', { name: 'Clear Neutral Cards' });
+  const touch = { identifier: 1, target: control, clientX: 10, clientY: 10 };
+  fireEvent.touchStart(control, { touches: [touch], changedTouches: [touch] });
+  expect(await screen.findByRole('tooltip', {}, { timeout: 2000 })).toHaveTextContent('No refunds or reshuffling.');
+  expect(screen.getByRole('region', { name: /Neutral card/ })).toBeInTheDocument();
+  fireEvent.touchEnd(control, { touches: [], changedTouches: [touch] });
+  await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(), { timeout: 2500 });
 });
