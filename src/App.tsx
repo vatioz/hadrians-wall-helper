@@ -18,7 +18,7 @@ import FateCardContainer from './components/fateCard';
 import fateCards from './settings/fateCards';
 import rounds from './settings/rounds';
 import { FateCard } from './settings/fateCards.model';
-import { PlayerCard } from './settings/playerCards.model';
+import { NeutralCardUsage, PlayerCard } from './settings/playerCards.model';
 import playerCards from './settings/playerCards';
 import opponentCards from './settings/opponentCards';
 import PlayerCardContainer from './components/playerCard';
@@ -37,13 +37,11 @@ const App = () => {
   const playerDeck = useDeck(playerCards);
   const opponentDeck = useDeck(opponentCards);
   const [objectiveCards, setObjectiveCards] = useState<PlayerCard[]>([]);
-  const [resourceAmount, setResourceAmount] = useState({
-    black: 0,
-    blue: 0,
-    purple: 0,
-    yellow: 0,
-    brick: 0,
+  const [resourceState, setResourceState] = useState({
+    amount: { black: 0, blue: 0, purple: 0, yellow: 0, brick: 0 },
+    neutralUses: {} as Record<number, NeutralCardUsage>,
   });
+  const resourceAmount = resourceState.amount;
 
   const pictDirectionCount = fateDeck.drawnCards.reduce((counts, { card }) => ({
     ...counts,
@@ -58,35 +56,57 @@ const App = () => {
   };
 
   const addResourceFromPlayerCard = (entry: DrawnCard<PlayerCard>) => {
-    setResourceAmount((current) => {
-      const updated = { ...current };
+    setResourceState((current) => {
+      const updated = { ...current.amount };
       entry.card.resources.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
         updated[resource] = updated[resource] + 1;
       });
-      return updated;
+      return { ...current, amount: updated };
     });
     playerDeck.discard(entry.id);
   };
 
   const addResourceFromFateCard = (entry: DrawnCard<FateCard>) => {
-    setResourceAmount((current) => {
-      const updated = { ...current };
+    setResourceState((current) => {
+      const updated = { ...current.amount };
       entry.card.resource.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
         updated[resource] = updated[resource] + 1;
       });
-      return updated;
+      return { ...current, amount: updated };
     });
     fateDeck.discard(entry.id);
   };
 
-  const resetResourceAmount = () => {
-    setResourceAmount({
-      black: 0,
-      blue: 0,
-      purple: 0,
-      yellow: 0,
-      brick: 0,
+  const useNeutralCard = (id: number, resource: 'brick' | 'black') => {
+    if (!opponentDeck.drawnCards.some((entry) => entry.id === id)) {
+      return;
+    }
+    setResourceState((current) => {
+      if (current.amount[resource] < 1) {
+        return current;
+      }
+      const usage = current.neutralUses[id] || { resources: 0, soldiers: 0 };
+      const placement = resource === 'brick' ? 'resources' : 'soldiers';
+      return {
+        amount: { ...current.amount, [resource]: current.amount[resource] - 1 },
+        neutralUses: {
+          ...current.neutralUses,
+          [id]: { ...usage, [placement]: usage[placement] + 1 },
+        },
+      };
     });
+  };
+
+  const clearNeutralCards = () => {
+    setResourceState((current) => ({ ...current, neutralUses: {} }));
+    opponentDeck.clear();
+  };
+
+  const resetResourceAmount = () => {
+    setResourceState((current) => ({
+      ...current,
+      amount: { black: 0, blue: 0, purple: 0, yellow: 0, brick: 0 },
+    }));
   };
 
   const sortByArrow = () => {
@@ -95,8 +115,10 @@ const App = () => {
   };
 
   const changeResourceAmountByKey = (key: string, amount: number) => {
-    const newResourceAmount = { ...resourceAmount, [key]: amount };
-    setResourceAmount(newResourceAmount);
+    setResourceState((current) => ({
+      ...current,
+      amount: { ...current.amount, [key]: amount },
+    }));
   };
 
   function capitalizeFirstLetter(string: string) {
@@ -229,8 +251,12 @@ const App = () => {
               />
               <OpponentCardPanel
                 opponentCards={opponentDeck.drawnCards}
-                clearOpponentCards={opponentDeck.clear}
+                clearOpponentCards={clearNeutralCards}
                 randomOpponentCard={opponentDeck.draw}
+                neutralUses={resourceState.neutralUses}
+                canBuyGoods={resourceAmount.brick > 0}
+                canScout={resourceAmount.black > 0}
+                onNeutralUse={useNeutralCard}
               />
             </Grid>
             <Grid item xs={12} md={4}>

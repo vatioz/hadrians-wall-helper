@@ -73,35 +73,40 @@ test.each([
   expect(screen.getAllByRole('button', { name: action })).toEqual([newerControl]);
 });
 
-test('Neutral card toggles stay with their draw instance when drawing another card and repeating a deck', () => {
+test('Neutral placements stay with their draw instance when drawing another card and repeating a deck', () => {
   jest.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
 
   const drawButton = screen.getByRole('button', { name: 'Draw Opponent Card' });
   userEvent.click(drawButton);
+  userEvent.click(within(screen.getByText('Brick').parentElement!).getByRole('button', { name: '+' }));
+  userEvent.click(within(screen.getByText('Black').parentElement!).getByRole('button', { name: '+' }));
+  const originalGoods = screen.getByRole('button', { name: 'Buy Goods' });
+  const originalScout = screen.getByRole('button', { name: 'Scout' });
+  const originalCard = within(screen.getByRole('region', { name: 'Neutral card Engineer' }));
   userEvent.click(screen.getByRole('button', { name: 'Buy Goods' }));
   userEvent.click(screen.getByRole('button', { name: 'Scout' }));
-  const originalGoods = screen.getByRole('button', { name: /Bought Goods/ });
-  const originalScout = screen.getByRole('button', { name: /Scouted/ });
 
   userEvent.click(drawButton);
-  expect(screen.getByRole('button', { name: /Bought Goods/ })).toBe(originalGoods);
-  expect(screen.getByRole('button', { name: /Scouted/ })).toBe(originalScout);
+  expect(screen.getAllByRole('button', { name: 'Buy Goods' })).toContain(originalGoods);
+  expect(screen.getAllByRole('button', { name: 'Scout' })).toContain(originalScout);
 
   for (let drawCount = 2; drawCount < 13; drawCount += 1) {
     userEvent.click(drawButton);
   }
 
-  const goodsControls = screen.getAllByRole('button', { name: /goods/i });
-  const scoutControls = screen.getAllByRole('button', { name: /scout/i });
-  expect(goodsControls[0]).toHaveTextContent('Buy Goods');
-  expect(scoutControls[0]).toHaveTextContent('Scout');
+  const goodsControls = screen.getAllByRole('button', { name: 'Buy Goods' });
+  const scoutControls = screen.getAllByRole('button', { name: 'Scout' });
+  const newerEngineer = within(screen.getAllByRole('region', { name: 'Neutral card Engineer' })[0]);
+  expect(newerEngineer.getByText('Resources placed: 0')).toBeInTheDocument();
+  expect(newerEngineer.getByText('Soldiers placed: 0')).toBeInTheDocument();
   expect(goodsControls[12]).toBe(originalGoods);
   expect(scoutControls[12]).toBe(originalScout);
 
   userEvent.click(screen.getAllByRole('button', { name: '+' })[0]);
-  expect(screen.getByRole('button', { name: /Bought Goods/ })).toBe(originalGoods);
-  expect(screen.getByRole('button', { name: /Scouted/ })).toBe(originalScout);
+  expect(originalCard.getByText('Resources placed: 1')).toBeInTheDocument();
+  expect(originalCard.getByText('Soldiers placed: 1')).toBeInTheDocument();
+  expect(screen.getByText('Extra Invasion Draws: 2')).toBeInTheDocument();
 });
 
 test('rendering and rerendering the App never mutates imported card decks', () => {
