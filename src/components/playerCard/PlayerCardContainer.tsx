@@ -60,6 +60,7 @@ interface Props {
   addResourceFromPlayerCard?: (card: PlayerCard) => void;
   isAI?: boolean;
   isPathFull?: boolean;
+  isProspect?: boolean;
 }
 
 const PlayerCardContainer: React.FC<Props> = ({
@@ -68,6 +69,7 @@ const PlayerCardContainer: React.FC<Props> = ({
   addResourceFromPlayerCard,
   isAI = false,
   isPathFull = false,
+  isProspect = false,
 }) => {
   const [isBoughtGoods, setBoughtGoods] = useState(false);
   const [isScout, setScout] = useState(false);
@@ -111,7 +113,7 @@ const PlayerCardContainer: React.FC<Props> = ({
             </div>
           </Grid>
           <Grid item xs={3}>
-            <NumberText>{card.goods}</NumberText>
+            <NumberText aria-label={`Trade Good ${card.goods}`}>{card.goods}</NumberText>
           </Grid>
           <Grid item xs={3}>
             <div style={{ height: '2em', width: '2em' }}>
@@ -119,7 +121,9 @@ const PlayerCardContainer: React.FC<Props> = ({
             </div>
           </Grid>
           <Grid item xs={3}>
-            <ScoutContainer scout={card.scout} />
+            <div role='img' aria-label={`${card.scout} Scouting Pattern`}>
+              <ScoutContainer scout={card.scout} />
+            </div>
           </Grid>
         </Grid>
         {!isAI && (
@@ -165,7 +169,7 @@ const PlayerCardContainer: React.FC<Props> = ({
             })}
           </Grid>
         )}
-        {!isAI && (
+        {!isAI && !isProspect && (
           <Grid item container direction='row'>
             <CardPrimaryButton
               onClick={() => addObjectiveCard && addObjectiveCard(card)}
