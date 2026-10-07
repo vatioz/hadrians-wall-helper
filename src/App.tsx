@@ -1,4 +1,4 @@
-import { createTheme, Divider, Grid, ThemeProvider } from '@mui/material';
+import { createTheme, Divider, Grid, ThemeProvider, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import {
   AppContainer,
@@ -268,9 +268,11 @@ const App = () => {
                   justifyContent='space-between'
                 >
                   <AppPrimaryText>Fate Cards</AppPrimaryText>
-                  <AppPrimaryButton aria-label='Clear Fate Cards' onClick={fateDeck.clear}>
-                    Clear
-                  </AppPrimaryButton>
+                  <Tooltip describeChild title='Remove revealed Fate cards and attack totals after resolving the invasion. Do not reshuffle the deck.'>
+                    <AppPrimaryButton onClick={fateDeck.clear}>
+                      Clear Invasion
+                    </AppPrimaryButton>
+                  </Tooltip>
                 </Grid>
                 <Grid
                   item
@@ -309,9 +311,11 @@ const App = () => {
                   justifyContent='space-between'
                 >
                   <AppPrimaryText>Player Cards</AppPrimaryText>
-                  <AppPrimaryButton aria-label='Clear Player Cards' onClick={playerDeck.clear}>
-                    Clear
-                  </AppPrimaryButton>
+                  <Tooltip describeChild title='Remove displayed Player cards for the next Year; keep Paths and the remaining deck.'>
+                    <AppPrimaryButton onClick={playerDeck.clear}>
+                      Clear Player Cards
+                    </AppPrimaryButton>
+                  </Tooltip>
                 </Grid>
                 <AppPrimaryButton onClick={playerDeck.draw}>
                   Draw Player Card

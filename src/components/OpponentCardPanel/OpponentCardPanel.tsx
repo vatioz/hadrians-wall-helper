@@ -1,5 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid/Grid';
+import Tooltip from '@mui/material/Tooltip';
 import { AppPrimaryButton, AppPrimaryText, ResourceCounterCard } from '../../App.styled';
 import PlayerCardContainer from '../playerCard';
 import { NeutralCardUsage, PlayerCard } from '../../settings/playerCards.model';
@@ -32,7 +33,9 @@ const OpponentCardPanel: React.FC<Props> = ({
     <ResourceCounterCard>
       <Grid item container direction='row' justifyContent='space-between'>
         <AppPrimaryText>Opponent Cards</AppPrimaryText>
-        <AppPrimaryButton aria-label='Clear Opponent Cards' onClick={clearOpponentCards}>Clear</AppPrimaryButton>
+        <Tooltip describeChild title='After resolving the invasion, remove Neutral cards, placements and extra draws. No refunds or reshuffling.'>
+          <AppPrimaryButton onClick={clearOpponentCards}>Clear Neutral Cards</AppPrimaryButton>
+        </Tooltip>
       </Grid>
       <AppPrimaryButton onClick={randomOpponentCard}>
         Draw Opponent Card

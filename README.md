@@ -22,6 +22,22 @@ App regressions cover exact payments, repeated and cross-card totals, stable dra
 instances, disabled-action tooltips, cleanup, and protection against batched
 overspending. These tests do not depend on local rulebook files.
 
+## Manual Cleanup
+
+Cleanup buttons explain their effects on hover, keyboard focus, or touch-and-hold:
+
+- **Clear Player Cards:** remove the displayed Player cards for the next Year;
+	retain Paths and the remaining pile.
+- **Clear Neutral Cards:** after invasion resolution, remove Neutral cards,
+	placements and extra draws without refunding payments.
+- **Clear Invasion:** remove revealed Fate cards and their attack totals.
+- **Zero Resources:** zero available counters without removing cards, placements
+	or Paths.
+
+None of these actions reshuffles or replenishes a deck, starts a new game, or
+advances the Year. The next draw continues from the remaining pile; drawing from
+an exhausted pile still automatically reshuffles that source deck.
+
 ## Getting Started
 
 ### Prerequisites
