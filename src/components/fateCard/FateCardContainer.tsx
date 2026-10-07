@@ -13,7 +13,8 @@ import { GoodsIcon } from '../../assets/icons/GoodsIcon';
 import { LeftArrow } from '../../assets/icons/LeftArrow';
 import { RightArrow } from '../../assets/icons/RightArrow';
 import { UpArrow } from '../../assets/icons/UpArrow';
-import Grid from '@mui/material/Grid/Grid';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import { FateCard } from '../../settings/fateCards.model';
 import { nanoid } from 'nanoid';
 
@@ -61,7 +62,7 @@ const FateCardContainer: React.FC<Props> = ({
   removePickedFateCards,
 }) => {
   return (
-    <Grid item container direction='column'>
+    <Stack>
       <div
         style={{
           marginTop: '0.5em',
@@ -81,7 +82,7 @@ const FateCardContainer: React.FC<Props> = ({
           </div>
           <NumberText>{card.goods}</NumberText>
         </MiddleContainer>
-        <Grid item container direction='row'>
+        <Grid container direction='row'>
           {card.resource.map((d: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
             switch (d) {
               case 'black':
@@ -97,7 +98,7 @@ const FateCardContainer: React.FC<Props> = ({
             }
           })}
         </Grid>
-        <Grid item container direction='row'>
+        <Grid container direction='row'>
           <CardPrimaryButton onClick={() => addResourceFromFateCard(card)}>
             As Resource
           </CardPrimaryButton>
@@ -106,7 +107,7 @@ const FateCardContainer: React.FC<Props> = ({
           </CardPrimaryButton>
         </Grid>
       </div>
-    </Grid>
+    </Stack>
   );
 };
 

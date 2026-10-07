@@ -6,8 +6,9 @@ import {
   StyledText,
 } from './style';
 // import Grid from '@mui/material/Grid/Grid';
-import Button from '@mui/material/Button/Button';
-import Grid from '@mui/material/Grid/Grid';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 
 interface Props {
   colorText: string;
@@ -40,12 +41,11 @@ const ResourceCounter: React.FC<Props> = ({
   const color = textColor === 'brick' ? 'grey' : textColor;
 
   return (
-    <Grid item container direction='column'>
+    <Stack>
       <Grid
-        item
         container
         direction='row'
-        justifyContent='space-between'
+        sx={{ justifyContent: 'space-between' }}
         key={`${textColor}-counter-sub`}
       >
         <StyledText color={color}>
@@ -59,7 +59,7 @@ const ResourceCounter: React.FC<Props> = ({
         </Grid>
         {/* </ButtonSetContainer> */}
       </Grid>
-    </Grid>
+    </Stack>
   );
 };
 

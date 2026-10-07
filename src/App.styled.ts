@@ -1,4 +1,4 @@
-import Button from '@mui/material/Button/Button';
+import Button from '@mui/material/Button';
 import styled from 'styled-components';
 
 export const AppPrimaryButton = styled(Button)`

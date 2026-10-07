@@ -1,5 +1,5 @@
-import Button from '@mui/material/Button/Button';
-import Divider from '@mui/material/Divider/Divider';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import styled from 'styled-components';
 
 export const FateCardsContainer = styled.div`

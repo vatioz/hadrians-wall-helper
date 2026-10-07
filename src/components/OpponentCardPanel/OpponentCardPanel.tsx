@@ -1,5 +1,5 @@
 import React from 'react';
-import Grid from '@mui/material/Grid/Grid';
+import Grid from '@mui/material/Grid';
 import Tooltip from '@mui/material/Tooltip';
 import { AppPrimaryButton, AppPrimaryText, ResourceCounterCard } from '../../App.styled';
 import PlayerCardContainer from '../playerCard';
@@ -31,7 +31,7 @@ const OpponentCardPanel: React.FC<Props> = ({
   }, 0);
   return (
     <ResourceCounterCard>
-      <Grid item container direction='row' justifyContent='space-between'>
+      <Grid container direction='row' sx={{ justifyContent: 'space-between' }}>
         <AppPrimaryText>Opponent Cards</AppPrimaryText>
         <Tooltip describeChild disableInteractive title='After resolving the invasion, remove Neutral cards, placements and extra draws. No refunds or reshuffling.'>
           <AppPrimaryButton onClick={clearOpponentCards}>Clear Neutral Cards</AppPrimaryButton>

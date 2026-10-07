@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Grid/Grid';
+import Stack from '@mui/material/Stack';
 import React from 'react';
 import ResourceCounter from '../resourceCounter/ResourceCounter';
 // import { CounterSetContainer } from './style';
@@ -14,7 +14,7 @@ const ResourceCounterSet: React.FC<Props> = ({
 }) => {
   return (
     // <CounterSetContainer>
-    <Grid item container direction='column' mt={2}>
+    <Stack sx={{ mt: 2 }}>
       {Object.entries(resourceAmount).map(([key, value]) => (
         <ResourceCounter
           textColor={key}
@@ -24,7 +24,7 @@ const ResourceCounterSet: React.FC<Props> = ({
           key={`${key}-counter`}
         />
       ))}
-    </Grid>
+    </Stack>
     // </CounterSetContainer>
   );
 };
