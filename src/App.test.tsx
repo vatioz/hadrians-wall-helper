@@ -84,3 +84,20 @@ test('all three deck controls draw and clear independently without restarting th
   expect(screen.getByRole('button', { name: 'As Path' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Buy Goods' })).toBeInTheDocument();
 });
+
+test('normal game interactions do not emit debug output', () => {
+  const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+  const debug = jest.spyOn(console, 'debug').mockImplementation(() => {});
+  render(<App />);
+
+  userEvent.click(screen.getByRole('button', { name: 'Draw Fate Card' }));
+  userEvent.click(screen.getByRole('button', { name: 'Draw Player Card' }));
+  userEvent.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
+  userEvent.click(screen.getAllByRole('button', { name: '+' })[0]);
+  userEvent.click(screen.getByRole('button', { name: 'Clear Fate Cards' }));
+  userEvent.click(screen.getByRole('button', { name: 'Clear Player Cards' }));
+  userEvent.click(screen.getByRole('button', { name: 'Clear Opponent Cards' }));
+
+  expect(log).not.toHaveBeenCalled();
+  expect(debug).not.toHaveBeenCalled();
+});
