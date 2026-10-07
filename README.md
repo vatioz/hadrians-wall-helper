@@ -87,6 +87,6 @@ or `gh-pages` CLI is needed.
 
 - React 19
 - TypeScript
-- Material-UI v5
+- Material UI v9
 - Styled Components
 - Vite, Vitest, and ESLint

@@ -1,5 +1,5 @@
 import React from 'react';
-import Grid from '@mui/material/Grid/Grid';
+import Grid from '@mui/material/Grid';
 import { AppPrimaryButton, AppPrimaryText, ResourceCounterCard } from '../../App.styled';
 import ResourceCounterSet from '../resourceCounterSet';
 
@@ -16,7 +16,7 @@ const ResourceCounterPanel: React.FC<Props> = ({
 }) => {
   return (
     <ResourceCounterCard key={`card-resource`}>
-      <Grid item container direction='row' justifyContent='space-between'>
+      <Grid container direction='row' sx={{ justifyContent: 'space-between' }}>
         <AppPrimaryText>Resource</AppPrimaryText>
         <AppPrimaryButton onClick={resetResourceAmount}>Clear</AppPrimaryButton>
       </Grid>

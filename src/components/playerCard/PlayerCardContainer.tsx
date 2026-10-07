@@ -8,7 +8,8 @@ import {
 } from './style';
 import { HorseIcon } from '../../assets/icons/HorseIcon';
 import { GoodsIcon } from '../../assets/icons/GoodsIcon';
-import Grid from '@mui/material/Grid/Grid';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import { LIcon } from '../../assets/icons/LIcon';
 import { SIcon } from '../../assets/icons/SIcon';
 import { LineIcon } from '../../assets/icons/LineIcon';
@@ -73,7 +74,7 @@ const PlayerCardContainer: React.FC<Props> = ({
   const [isScout, setScout] = useState(false);
   const mTop = isAI ? '1.25em' : '0.5em';
   return (
-    <Grid container direction='column'>
+    <Stack>
       <div
         style={{
           marginTop: mTop,
@@ -82,48 +83,46 @@ const PlayerCardContainer: React.FC<Props> = ({
           padding: '1em',
         }}
       >
-        <Grid container direction='column'>
+        <Stack>
           <CardNameText>{card.name}</CardNameText>
-        </Grid>
+        </Stack>
         {!isAI && (
-          <Grid item container direction='column'>
+          <Stack>
             <ObjectiveText>{card.objective}</ObjectiveText>
-            <Grid item container direction='row' justifyContent='space-between'>
+            <Grid container direction='row' sx={{ justifyContent: 'space-between' }}>
               {Object.entries(card.score).map(([key, val]) => (
                 <NumberText key={key}>
                   {key} : {val}VP
                 </NumberText>
               ))}
             </Grid>
-          </Grid>
+          </Stack>
         )}
         <Grid
-          item
           container
           direction='row'
-          justifyContent='space-between'
-          alignItems='center'
+          sx={{ justifyContent: 'space-between', alignItems: 'center' }}
           spacing={0}
         >
-          <Grid item xs={3}>
+          <Grid size={3}>
             <div style={{ height: '2em', width: '2em' }}>
               <GoodsIcon />
             </div>
           </Grid>
-          <Grid item xs={3}>
+          <Grid size={3}>
             <NumberText>{card.goods}</NumberText>
           </Grid>
-          <Grid item xs={3}>
+          <Grid size={3}>
             <div style={{ height: '2em', width: '2em' }}>
               <HorseIcon />
             </div>
           </Grid>
-          <Grid item xs={3}>
+          <Grid size={3}>
             <ScoutContainer scout={card.scout} />
           </Grid>
         </Grid>
         {!isAI && (
-          <Grid item container direction='row'>
+          <Grid container direction='row'>
             {card.resources.map((d: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
               switch (d) {
                 case 'black':
@@ -166,7 +165,7 @@ const PlayerCardContainer: React.FC<Props> = ({
           </Grid>
         )}
         {!isAI && (
-          <Grid item container direction='row'>
+          <Grid container direction='row'>
             <CardPrimaryButton
               onClick={() => addObjectiveCard && addObjectiveCard(card)}
               disabled={isPathFull}
@@ -180,7 +179,7 @@ const PlayerCardContainer: React.FC<Props> = ({
         )}
         {isAI && (
           <>
-            <Grid item container direction='row'>
+            <Grid container direction='row'>
               <CardPrimaryButton
                 onClick={() => setBoughtGoods(!isBoughtGoods)}
               >
@@ -195,7 +194,7 @@ const PlayerCardContainer: React.FC<Props> = ({
           </>
         )}
       </div>
-    </Grid>
+    </Stack>
   );
 };
 

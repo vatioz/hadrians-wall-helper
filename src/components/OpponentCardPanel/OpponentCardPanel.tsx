@@ -1,5 +1,5 @@
 import React from 'react';
-import Grid from '@mui/material/Grid/Grid';
+import Grid from '@mui/material/Grid';
 import { AppPrimaryButton, AppPrimaryText, ResourceCounterCard } from '../../App.styled';
 import PlayerCardContainer from '../playerCard';
 import { PlayerCard } from '../../settings/playerCards.model';
@@ -18,7 +18,7 @@ const OpponentCardPanel: React.FC<Props> = ({
 }) => {
   return (
     <ResourceCounterCard>
-      <Grid item container direction='row' justifyContent='space-between'>
+      <Grid container direction='row' sx={{ justifyContent: 'space-between' }}>
         <AppPrimaryText>Opponent Cards</AppPrimaryText>
         <AppPrimaryButton aria-label='Clear Opponent Cards' onClick={clearOpponentCards}>Clear</AppPrimaryButton>
       </Grid>
