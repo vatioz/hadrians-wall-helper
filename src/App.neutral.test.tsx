@@ -1,13 +1,14 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import App from './App';
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test('two Neutral trades and one scout spend their costs and add three invasion draws (PDF pp. 13, 19, 22)', () => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
   userEvent.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
   const brick = within(screen.getByText('Brick').parentElement!);
@@ -34,7 +35,7 @@ test('two Neutral trades and one scout spend their costs and add three invasion 
 });
 
 test('Neutral uses accumulate across cards and cleanup preserves payments, Paths, Fate cards, and piles', () => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   const { rerender } = render(<App />);
   userEvent.click(screen.getByRole('button', { name: 'Draw Player Card' }));
   userEvent.click(screen.getByRole('button', { name: 'As Path' }));
@@ -81,7 +82,7 @@ test('Neutral uses accumulate across cards and cleanup preserves payments, Paths
 });
 
 test('unpaid and batched Neutral uses cannot overdraw resources or add unpaid placements', () => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
   userEvent.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
   userEvent.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));

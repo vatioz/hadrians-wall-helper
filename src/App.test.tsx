@@ -1,19 +1,20 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import App from './App';
 import fateCards from './settings/fateCards';
 import opponentCards from './settings/opponentCards';
 import playerCards from './settings/playerCards';
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test.each([
   { deck: 'Player', counts: { Black: 1, Blue: 1, Purple: 0, Yellow: 0, Brick: 1 } },
   { deck: 'Fate', counts: { Black: 3, Blue: 1, Purple: 1, Yellow: 2, Brick: 2 } },
 ])('$deck card resources preserve a queued manual increment and immediately update every counter', ({ deck, counts }) => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
   userEvent.click(screen.getByRole('button', { name: `Draw ${deck} Card` }));
 
@@ -47,7 +48,7 @@ test.each([
   { deck: 'Player', action: 'As Path' },
   { deck: 'Fate', action: 'Discard' },
 ])('$deck cards preserve mounted controls across draws and resource updates', ({ deck, action }) => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
 
   userEvent.click(screen.getByRole('button', { name: `Draw ${deck} Card` }));
@@ -74,7 +75,7 @@ test.each([
 });
 
 test('Neutral placements stay with their draw instance when drawing another card and repeating a deck', () => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
 
   const drawButton = screen.getByRole('button', { name: 'Draw Opponent Card' });
@@ -113,7 +114,7 @@ test('rendering and rerendering the App never mutates imported card decks', () =
   const originalFateCards = [...fateCards];
   const originalPlayerCards = [...playerCards];
   const originalNeutralCards = [...opponentCards];
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
 
   const { rerender } = render(<App />);
 
@@ -129,7 +130,7 @@ test('rendering and rerendering the App never mutates imported card decks', () =
 });
 
 test('all three deck controls draw and clear independently without restarting their piles', () => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
 
   userEvent.click(screen.getByRole('button', { name: 'Draw Fate Card' }));
@@ -179,8 +180,8 @@ test('all three deck controls draw and clear independently without restarting th
 });
 
 test('normal game interactions do not emit debug output', () => {
-  const log = jest.spyOn(console, 'log').mockImplementation(() => {});
-  const debug = jest.spyOn(console, 'debug').mockImplementation(() => {});
+  const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+  const debug = vi.spyOn(console, 'debug').mockImplementation(() => {});
   render(<App />);
 
   userEvent.click(screen.getByRole('button', { name: 'Draw Fate Card' }));
@@ -204,16 +205,23 @@ test.each([
   render(<App />);
   const control = screen.getByRole('button', { name });
   expect(control).toHaveTextContent(name);
-  userEvent.hover(control);
+  const matches = control.matches.bind(control);
+  vi.spyOn(control, 'matches').mockImplementation((selector) => (
+    selector === ':focus-visible' ? document.activeElement === control : matches(selector)
+  ));
+  while (document.activeElement !== control) {
+    userEvent.tab();
+  }
+  expect(control).toHaveFocus();
   expect(await screen.findByRole('tooltip')).toHaveTextContent(hint);
-  userEvent.unhover(control);
+  userEvent.tab();
   await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
-  act(() => control.focus());
+  userEvent.hover(control);
   expect(await screen.findByRole('tooltip')).toHaveTextContent(hint);
 });
 
 test('cleanup controls preserve Paths and never refund Neutral payments or replenish decks', () => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
   userEvent.click(screen.getByRole('button', { name: 'Draw Player Card' }));
   userEvent.click(screen.getByRole('button', { name: 'Draw Player Card' }));

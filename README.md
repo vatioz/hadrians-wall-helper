@@ -63,7 +63,7 @@ Start the development server:
 npm start
 ```
 
-The app will open at [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000/hadrians-wall-helper/](http://localhost:3000/hadrians-wall-helper/).
 
 The page will automatically reload when you make changes.
 
@@ -72,19 +72,20 @@ The page will automatically reload when you make changes.
 Run the automated tests once without watch mode, locally or in CI:
 
 ```bash
-npm test -- --watchAll=false
+npm test
+npm run typecheck
+npm run lint
 ```
 
 Place tests next to their components or exported reference data using the
 `*.test.tsx` or `*.test.ts` naming convention.
 Use React Testing Library's `render` and `screen`, preferring role and accessible
-name queries for controls and visible text queries for content. Jest DOM matchers
+name queries for controls and visible text queries for content. Testing Library DOM matchers
 such as `toBeInTheDocument` are loaded automatically by `src/setupTests.ts`.
 
-`src/App.test.tsx` is the smoke-test example: it renders the real app without
-mocking its components and checks that its title and card draw control appear.
-The Jest override in `config-overrides.js` enables Babel transformation for the
-ES-module dependencies used by the app (Material UI, Babel runtime, and nanoid).
+`src/App.test.tsx` renders the real app without mocking its components and covers
+card draws, resources, and independent deck controls. Vitest uses jsdom and the
+setup configured in `vite.config.ts`. Use `npm run test:watch` during development.
 
 See the [rule-backed coverage checklist](docs/testing.md) for issue #12's
 Phase 1 checks, source pages, and unresolved reference gaps.
@@ -98,6 +99,9 @@ npm run build
 ```
 
 The build output will be in the `build/` folder, ready for deployment.
+Vite preserves the `/hadrians-wall-helper/` GitHub Pages base path. Preview the
+production output with `npm run preview` and open
+[http://localhost:4173/hadrians-wall-helper/](http://localhost:4173/hadrians-wall-helper/).
 
 ## Tech Stack
 
@@ -105,4 +109,4 @@ The build output will be in the `build/` folder, ready for deployment.
 - TypeScript
 - Material-UI v5
 - Styled Components
-- Create React App (with custom webpack config via react-app-rewired)
+- Vite, Vitest, and ESLint

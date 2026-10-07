@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
-import Inventory2Outlined from '@mui/icons-material/Inventory2Outlined';
-import PersonOutline from '@mui/icons-material/PersonOutline';
+import { Inventory2Outlined, PersonOutline } from '@mui/icons-material';
 import ColorSquare from '../colorSquare/ColorSquare';
 import {
   CardNameText,

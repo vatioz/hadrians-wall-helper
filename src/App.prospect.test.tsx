@@ -1,13 +1,14 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import App from './App';
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test('the chosen Prospect retains its information and grants its reward only once (PDF pp. 4-5)', () => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
   const draw = screen.getByRole('button', { name: 'Draw Player Card' });
   const clear = screen.getByRole('button', { name: 'Clear Player Cards' });
@@ -54,7 +55,7 @@ test('the chosen Prospect retains its information and grants its reward only onc
 });
 
 test('choosing a new Prospect replaces the previous one without losing a retained Path', () => {
-  jest.spyOn(Math, 'random').mockReturnValue(0);
+  vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
   const draw = screen.getByRole('button', { name: 'Draw Player Card' });
   const clear = screen.getByRole('button', { name: 'Clear Player Cards' });
