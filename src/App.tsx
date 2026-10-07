@@ -1,4 +1,4 @@
-import { createTheme, Divider, Grid, ThemeProvider, Tooltip } from '@mui/material';
+import { createTheme, Divider, Grid, Stack, ThemeProvider, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import {
   AppContainer,
@@ -144,20 +144,18 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
               {rounds &&
                 rounds.map((round) => (
                   <Grid
-                    item
                     container
-                    direction='column'
-                    alignItems='center'
-                    xs={2}
+                    sx={{ flexDirection: 'column', alignItems: 'center' }}
+                    size={2}
+                    spacing={0}
                     key={`${round.round}-round`}
                   >
                     <RoundPrimaryText>Round {round.round}</RoundPrimaryText>
-                    <Grid item container direction='column'>
+                    <Stack sx={{ width: '100%' }}>
                       <Grid
-                        item
                         container
                         direction='row'
-                        justifyContent='space-between'
+                        sx={{ justifyContent: 'space-between' }}
                       >
                         <RoundSecondaryText color='green'>
                           Easy
@@ -167,10 +165,9 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                         </RoundSecondaryText>
                       </Grid>
                       <Grid
-                        item
                         container
                         direction='row'
-                        justifyContent='space-between'
+                        sx={{ justifyContent: 'space-between' }}
                       >
                         <RoundSecondaryText color='orange'>
                           Medium
@@ -180,10 +177,9 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                         </RoundSecondaryText>
                       </Grid>
                       <Grid
-                        item
                         container
                         direction='row'
-                        justifyContent='space-between'
+                        sx={{ justifyContent: 'space-between' }}
                       >
                         <RoundSecondaryText color='red'>
                           Hard
@@ -193,10 +189,9 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                         </RoundSecondaryText>
                       </Grid>
                       <Grid
-                        item
                         container
                         direction='row'
-                        justifyContent='space-between'
+                        sx={{ justifyContent: 'space-between' }}
                       >
                         <RoundSecondaryText color='grey'>
                           Valour
@@ -205,7 +200,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                           {round.valour}
                         </RoundSecondaryText>
                       </Grid>
-                    </Grid>
+                    </Stack>
                   </Grid>
                 ))}
             </Grid>
@@ -214,11 +209,10 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
               {objectiveCards &&
                 objectiveCards.map((card) => (
                   <Grid
-                    item
                     container
-                    direction='column'
-                    alignItems='center'
-                    xs={2}
+                    sx={{ flexDirection: 'column', alignItems: 'center' }}
+                    size={2}
+                    spacing={0}
                   >
                     <RoundPrimaryText>{card.name}</RoundPrimaryText>
                     <ObjectiveExplainText
@@ -229,10 +223,9 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                       {card.objective}
                     </ObjectiveExplainText>
                     <Grid
-                      item
                       container
                       direction='row'
-                      justifyContent='space-between'
+                      sx={{ justifyContent: 'space-between', width: '100%' }}
                     >
                       {Object.entries(card.score).map(([key, val]) => (
                         <ObjectiveScoreText fontWeight={500} fontSize={'0.8em'}>
@@ -247,9 +240,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
           <Grid container spacing={2}>
             {/** Grid for Resource Counter and AI Card */}
             <Grid
-              item
-              xs={12}
-              md={4}
+              size={{ xs: 12, md: 4 }}
             >
               <ResourceCounterPanel
                 resourceAmount={resourceAmount}
@@ -266,13 +257,12 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                 onNeutralUse={useNeutralCard}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <FateCardSection key={`form-card-fate-card`}>
                 <Grid
-                  item
                   container
                   direction='row'
-                  justifyContent='space-between'
+                  sx={{ justifyContent: 'space-between' }}
                 >
                   <AppPrimaryText>Fate Cards</AppPrimaryText>
                   <Tooltip describeChild disableInteractive title='Remove revealed Fate cards and attack totals after resolving the invasion. Do not reshuffle the deck.'>
@@ -282,10 +272,9 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                   </Tooltip>
                 </Grid>
                 <Grid
-                  item
                   container
                   direction='row'
-                  justifyContent='space-between'
+                  sx={{ justifyContent: 'space-between' }}
                 >
                   {Object.entries(pictDirectionCount).map(([key, val]) => (
                     <RoundSecondaryText color={'black'} key={key}>
@@ -309,13 +298,12 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                   ))}
               </FateCardSection>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <PlayerCardSection key={`form-card-fate-card`}>
                 <Grid
-                  item
                   container
                   direction='row'
-                  justifyContent='space-between'
+                  sx={{ justifyContent: 'space-between' }}
                 >
                   <AppPrimaryText>Player Cards</AppPrimaryText>
                   <Tooltip describeChild disableInteractive title='Remove displayed Player cards for the next Year; keep Paths and the remaining deck.'>

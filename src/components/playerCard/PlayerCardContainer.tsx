@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
-import Inventory2Outlined from '@mui/icons-material/Inventory2Outlined';
-import PersonOutline from '@mui/icons-material/PersonOutline';
+import { Inventory2Outlined, PersonOutlined } from '@mui/icons-material';
 import ColorSquare from '../colorSquare/ColorSquare';
 import {
   CardNameText,
@@ -11,7 +10,8 @@ import {
 } from './style';
 import { HorseIcon } from '../../assets/icons/HorseIcon';
 import { GoodsIcon } from '../../assets/icons/GoodsIcon';
-import Grid from '@mui/material/Grid/Grid';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import { LIcon } from '../../assets/icons/LIcon';
 import { SIcon } from '../../assets/icons/SIcon';
 import { LineIcon } from '../../assets/icons/LineIcon';
@@ -84,7 +84,7 @@ const PlayerCardContainer: React.FC<Props> = ({
 }) => {
   const mTop = isAI ? '1.25em' : '0.5em';
   return (
-    <Grid container direction='column' component='section' aria-label={isAI ? `Neutral card ${card.name}` : undefined}>
+    <Stack component='section' aria-label={isAI ? `Neutral card ${card.name}` : undefined}>
       <div
         style={{
           marginTop: mTop,
@@ -93,50 +93,48 @@ const PlayerCardContainer: React.FC<Props> = ({
           padding: '1em',
         }}
       >
-        <Grid container direction='column'>
+        <Stack>
           <CardNameText>{card.name}</CardNameText>
-        </Grid>
+        </Stack>
         {!isAI && (
-          <Grid item container direction='column'>
+          <Stack>
             <ObjectiveText>{card.objective}</ObjectiveText>
-            <Grid item container direction='row' justifyContent='space-between'>
+            <Grid container direction='row' sx={{ justifyContent: 'space-between' }}>
               {Object.entries(card.score).map(([key, val]) => (
                 <NumberText key={key}>
                   {key} : {val}VP
                 </NumberText>
               ))}
             </Grid>
-          </Grid>
+          </Stack>
         )}
         <Grid
-          item
           container
           direction='row'
-          justifyContent='space-between'
-          alignItems='center'
+          sx={{ justifyContent: 'space-between', alignItems: 'center' }}
           spacing={0}
         >
-          <Grid item xs={3}>
+          <Grid size={3}>
             <div style={{ height: '2em', width: '2em' }}>
               <GoodsIcon />
             </div>
           </Grid>
-          <Grid item xs={3}>
+          <Grid size={3}>
             <NumberText aria-label={`Trade Good ${card.goods}`}>{card.goods}</NumberText>
           </Grid>
-          <Grid item xs={3}>
+          <Grid size={3}>
             <div style={{ height: '2em', width: '2em' }}>
               <HorseIcon />
             </div>
           </Grid>
-          <Grid item xs={3}>
+          <Grid size={3}>
             <div role='img' aria-label={`${card.scout} Scouting Pattern`}>
               <ScoutContainer scout={card.scout} />
             </div>
           </Grid>
         </Grid>
         {!isAI && (
-          <Grid item container direction='row'>
+          <Grid container direction='row'>
             {card.resources.map((d: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
               switch (d) {
                 case 'black':
@@ -179,7 +177,7 @@ const PlayerCardContainer: React.FC<Props> = ({
           </Grid>
         )}
         {!isAI && !isProspect && (
-          <Grid item container direction='row'>
+          <Grid container direction='row'>
             <CardPrimaryButton
               onClick={() => addObjectiveCard && addObjectiveCard(card)}
               disabled={isPathFull}
@@ -193,11 +191,11 @@ const PlayerCardContainer: React.FC<Props> = ({
         )}
         {isAI && (
           <>
-            <Grid item container direction='column' sx={{ fontSize: '0.875em', margin: '0.5em 0' }}>
+            <Stack sx={{ fontSize: '0.875em', margin: '0.5em 0' }}>
               <span>Resources placed: {neutralUsage.resources}</span>
               <span>Soldiers placed: {neutralUsage.soldiers}</span>
-            </Grid>
-            <Grid item container direction='row' sx={{ gap: 1 }}>
+            </Stack>
+            <Grid container direction='row' sx={{ gap: 1 }}>
               <Tooltip describeChild title='Spend 1 Resource (Brick); add 1 invasion draw.'>
                 <span tabIndex={canBuyGoods ? -1 : 0}>
                   <CardPrimaryButton aria-label='Buy Goods' disabled={!canBuyGoods} onClick={() => onUseNeutral && onUseNeutral('brick')}>
@@ -208,7 +206,7 @@ const PlayerCardContainer: React.FC<Props> = ({
               <Tooltip describeChild title='Spend 1 Soldier (Black); add 1 invasion draw.'>
                 <span tabIndex={canScout ? -1 : 0}>
                   <CardPrimaryButton aria-label='Scout' disabled={!canScout} onClick={() => onUseNeutral && onUseNeutral('black')}>
-                    Scout <PersonOutline sx={{ fontSize: 16, marginLeft: 1, marginRight: 0.5 }} /> 1
+                    Scout <PersonOutlined sx={{ fontSize: 16, marginLeft: 1, marginRight: 0.5 }} /> 1
                   </CardPrimaryButton>
                 </span>
               </Tooltip>
@@ -216,7 +214,7 @@ const PlayerCardContainer: React.FC<Props> = ({
           </>
         )}
       </div>
-    </Grid>
+    </Stack>
   );
 };
 
