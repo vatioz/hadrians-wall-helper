@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 import fateCards from './settings/fateCards';
@@ -7,6 +7,33 @@ import playerCards from './settings/playerCards';
 
 afterEach(() => {
   jest.restoreAllMocks();
+});
+
+test.each([
+  { deck: 'Player', counts: { Black: 1, Blue: 1, Purple: 0, Yellow: 0, Brick: 1 } },
+  { deck: 'Fate', counts: { Black: 3, Blue: 1, Purple: 1, Yellow: 2, Brick: 2 } },
+])('$deck card resources preserve a queued manual increment and immediately update every counter', ({ deck, counts }) => {
+  jest.spyOn(Math, 'random').mockReturnValue(0);
+  render(<App />);
+  userEvent.click(screen.getByRole('button', { name: `Draw ${deck} Card` }));
+
+  const blackCounter = within(screen.getByText('Black').parentElement!);
+  const collectButton = screen.getByRole('button', { name: 'As Resource' });
+
+  act(() => {
+    fireEvent.click(blackCounter.getByRole('button', { name: '+' }));
+    fireEvent.click(collectButton);
+  });
+
+  Object.entries(counts).forEach(([label, count]) => {
+    expect(within(screen.getByText(label).parentElement!).getByText(String(count))).toBeInTheDocument();
+  });
+  expect(screen.queryByRole('button', { name: 'As Resource' })).not.toBeInTheDocument();
+
+  userEvent.click(blackCounter.getByRole('button', { name: '+' }));
+  expect(blackCounter.getByText(String(counts.Black + 1))).toBeInTheDocument();
+  userEvent.click(blackCounter.getByRole('button', { name: '-' }));
+  expect(blackCounter.getByText(String(counts.Black))).toBeInTheDocument();
 });
 
 test('renders the solo helper with its card draw controls', () => {

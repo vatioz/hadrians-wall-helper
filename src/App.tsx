@@ -59,20 +59,24 @@ const App = () => {
   };
 
   const addResourceFromPlayerCard = (entry: DrawnCard<PlayerCard>) => {
-    const current = resourceAmount;
-    entry.card.resources.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
-      current[resource] = current[resource] + 1;
+    setResourceAmount((current) => {
+      const updated = { ...current };
+      entry.card.resources.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
+        updated[resource] = updated[resource] + 1;
+      });
+      return updated;
     });
-    setResourceAmount(current);
     playerDeck.discard(entry.id);
   };
 
   const addResourceFromFateCard = (entry: DrawnCard<FateCard>) => {
-    const current = resourceAmount;
-    entry.card.resource.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
-      current[resource] = current[resource] + 1;
+    setResourceAmount((current) => {
+      const updated = { ...current };
+      entry.card.resource.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
+        updated[resource] = updated[resource] + 1;
+      });
+      return updated;
     });
-    setResourceAmount(current);
     fateDeck.discard(entry.id);
   };
 
