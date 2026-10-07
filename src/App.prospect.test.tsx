@@ -7,19 +7,20 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-test('the chosen Prospect retains its information and grants its reward only once (PDF pp. 4-5)', () => {
+test('the chosen Prospect retains its information and grants its reward only once (PDF pp. 4-5)', async () => {
+  const user = userEvent.setup();
   vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
   const draw = screen.getByRole('button', { name: 'Draw Player Card' });
   const clear = screen.getByRole('button', { name: 'Clear Player Cards' });
-  userEvent.click(draw);
-  userEvent.click(clear);
-  userEvent.click(draw);
-  userEvent.click(clear);
-  userEvent.click(draw);
-  userEvent.click(draw);
+  await user.click(draw);
+  await user.click(clear);
+  await user.click(draw);
+  await user.click(clear);
+  await user.click(draw);
+  await user.click(draw);
 
-  userEvent.click(screen.getAllByRole('button', { name: 'As Path' })[0]);
+  await user.click(screen.getAllByRole('button', { name: 'As Path' })[0]);
   expect(screen.getByText('Vanguard')).toBeInTheDocument();
   expect(screen.getByText('Completed Wall Guard Sections')).toBeInTheDocument();
   expect(screen.getByText('3 : 3VP')).toBeInTheDocument();
@@ -27,7 +28,7 @@ test('the chosen Prospect retains its information and grants its reward only onc
     expect(within(screen.getByText(label).parentElement!).getByText('0')).toBeInTheDocument();
   });
 
-  userEvent.click(screen.getByRole('button', { name: 'As Resource' }));
+  await user.click(screen.getByRole('button', { name: 'As Resource' }));
 
   const prospect = within(screen.getByRole('region', { name: 'Current Prospect' }));
   expect(prospect.getByText('Trainer')).toBeInTheDocument();
@@ -38,43 +39,44 @@ test('the chosen Prospect retains its information and grants its reward only onc
     expect(within(screen.getByText(label).parentElement!).getByText(String(count))).toBeInTheDocument();
   });
 
-  userEvent.click(draw);
-  userEvent.click(within(screen.getByText('Purple').parentElement!).getByRole('button', { name: '+' }));
+  await user.click(draw);
+  await user.click(within(screen.getByText('Purple').parentElement!).getByRole('button', { name: '+' }));
   expect(prospect.getByText('Trainer')).toBeInTheDocument();
   expect(prospect.queryByRole('button')).not.toBeInTheDocument();
   expect(within(screen.getByText('Purple').parentElement!).getByText('2')).toBeInTheDocument();
   expect(within(screen.getByText('Brick').parentElement!).getByText('1')).toBeInTheDocument();
 
-  userEvent.click(clear);
+  await user.click(clear);
   expect(screen.queryByRole('region', { name: 'Current Prospect' })).not.toBeInTheDocument();
   expect(screen.getByText('Vanguard')).toBeInTheDocument();
   expect(screen.getByText('Completed Wall Guard Sections')).toBeInTheDocument();
-  userEvent.click(draw);
+  await user.click(draw);
   expect(screen.getByText('Forager')).toBeInTheDocument();
   expect(screen.queryByText('Trainer')).not.toBeInTheDocument();
 });
 
-test('choosing a new Prospect replaces the previous one without losing a retained Path', () => {
+test('choosing a new Prospect replaces the previous one without losing a retained Path', async () => {
+  const user = userEvent.setup();
   vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
   const draw = screen.getByRole('button', { name: 'Draw Player Card' });
   const clear = screen.getByRole('button', { name: 'Clear Player Cards' });
-  userEvent.click(draw);
-  userEvent.click(clear);
-  userEvent.click(draw);
-  userEvent.click(clear);
-  userEvent.click(draw);
-  userEvent.click(draw);
+  await user.click(draw);
+  await user.click(clear);
+  await user.click(draw);
+  await user.click(clear);
+  await user.click(draw);
+  await user.click(draw);
 
-  userEvent.click(screen.getAllByRole('button', { name: 'As Resource' })[1]);
-  userEvent.click(screen.getByRole('button', { name: 'As Path' }));
+  await user.click(screen.getAllByRole('button', { name: 'As Resource' })[1]);
+  await user.click(screen.getByRole('button', { name: 'As Path' }));
   expect(within(screen.getByRole('region', { name: 'Current Prospect' })).getByText('Trainer')).toBeInTheDocument();
   expect(screen.getByText('Vanguard')).toBeInTheDocument();
   expect(within(screen.getByText('Blue').parentElement!).getByText('0')).toBeInTheDocument();
   expect(within(screen.getByText('Yellow').parentElement!).getByText('0')).toBeInTheDocument();
 
-  userEvent.click(draw);
-  userEvent.click(screen.getByRole('button', { name: 'As Resource' }));
+  await user.click(draw);
+  await user.click(screen.getByRole('button', { name: 'As Resource' }));
   expect(screen.getAllByRole('region', { name: 'Current Prospect' })).toHaveLength(1);
   expect(within(screen.getByRole('region', { name: 'Current Prospect' })).getByText('Ranger')).toBeInTheDocument();
   expect(screen.queryByText('Trainer')).not.toBeInTheDocument();
