@@ -3,10 +3,11 @@ import Grid from '@mui/material/Grid/Grid';
 import { AppPrimaryButton, AppPrimaryText, ResourceCounterCard } from '../../App.styled';
 import PlayerCardContainer from '../playerCard';
 import { PlayerCard } from '../../settings/playerCards.model';
+import { DrawnCard } from '../../hooks/useDeck';
 
 interface Props {
   clearOpponentCards: () => void;
-  opponentCards: PlayerCard[];
+  opponentCards: DrawnCard<PlayerCard>[];
   randomOpponentCard: () => void;
 }
 
@@ -25,9 +26,9 @@ const OpponentCardPanel: React.FC<Props> = ({
         Draw Opponent Card
       </AppPrimaryButton>
       {opponentCards &&
-        opponentCards.map((card) => (
+        opponentCards.map(({ id, card }) => (
           <PlayerCardContainer
-            key={`${card.name}-card`}
+            key={`opponent-${id}`}
             isAI={true}
             card={card}
           />
