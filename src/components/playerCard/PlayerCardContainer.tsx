@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Tooltip } from '@mui/material';
+import Inventory2Outlined from '@mui/icons-material/Inventory2Outlined';
+import PersonOutline from '@mui/icons-material/PersonOutline';
 import ColorSquare from '../colorSquare/ColorSquare';
 import {
   CardNameText,
@@ -14,7 +17,7 @@ import { SIcon } from '../../assets/icons/SIcon';
 import { LineIcon } from '../../assets/icons/LineIcon';
 import { SquareIcon } from '../../assets/icons/SquareIcon';
 import { TIcon } from '../../assets/icons/TIcon';
-import { PlayerCard } from '../../settings/playerCards.model';
+import { NeutralCardUsage, PlayerCard } from '../../settings/playerCards.model';
 
 const ScoutContainer = (d: { scout: 'Line' | 'Square' | 'T' | 'L' | 'S' }) => {
   const shape = d.scout;
@@ -61,6 +64,10 @@ interface Props {
   isAI?: boolean;
   isPathFull?: boolean;
   isProspect?: boolean;
+  neutralUsage?: NeutralCardUsage;
+  canBuyGoods?: boolean;
+  canScout?: boolean;
+  onUseNeutral?: (resource: 'brick' | 'black') => void;
 }
 
 const PlayerCardContainer: React.FC<Props> = ({
@@ -70,12 +77,14 @@ const PlayerCardContainer: React.FC<Props> = ({
   isAI = false,
   isPathFull = false,
   isProspect = false,
+  neutralUsage = { resources: 0, soldiers: 0 },
+  canBuyGoods = false,
+  canScout = false,
+  onUseNeutral,
 }) => {
-  const [isBoughtGoods, setBoughtGoods] = useState(false);
-  const [isScout, setScout] = useState(false);
   const mTop = isAI ? '1.25em' : '0.5em';
   return (
-    <Grid container direction='column'>
+    <Grid container direction='column' component='section' aria-label={isAI ? `Neutral card ${card.name}` : undefined}>
       <div
         style={{
           marginTop: mTop,
@@ -184,17 +193,25 @@ const PlayerCardContainer: React.FC<Props> = ({
         )}
         {isAI && (
           <>
-            <Grid item container direction='row'>
-              <CardPrimaryButton
-                onClick={() => setBoughtGoods(!isBoughtGoods)}
-              >
-                {isBoughtGoods ? '✓ Bought Goods' : 'Buy Goods'}
-              </CardPrimaryButton>
-              <CardPrimaryButton
-                onClick={() => setScout(!isScout)}
-              >
-                {isScout ? '✓ Scouted' : 'Scout'}
-              </CardPrimaryButton>
+            <Grid item container direction='column' sx={{ fontSize: '0.875em', margin: '0.5em 0' }}>
+              <span>Resources placed: {neutralUsage.resources}</span>
+              <span>Soldiers placed: {neutralUsage.soldiers}</span>
+            </Grid>
+            <Grid item container direction='row' sx={{ gap: 1 }}>
+              <Tooltip describeChild title='Spend 1 Resource (Brick); add 1 invasion draw.'>
+                <span tabIndex={canBuyGoods ? -1 : 0}>
+                  <CardPrimaryButton aria-label='Buy Goods' disabled={!canBuyGoods} onClick={() => onUseNeutral && onUseNeutral('brick')}>
+                    Buy Goods <Inventory2Outlined sx={{ fontSize: 16, marginLeft: 1, marginRight: 0.5 }} /> 1
+                  </CardPrimaryButton>
+                </span>
+              </Tooltip>
+              <Tooltip describeChild title='Spend 1 Soldier (Black); add 1 invasion draw.'>
+                <span tabIndex={canScout ? -1 : 0}>
+                  <CardPrimaryButton aria-label='Scout' disabled={!canScout} onClick={() => onUseNeutral && onUseNeutral('black')}>
+                    Scout <PersonOutline sx={{ fontSize: 16, marginLeft: 1, marginRight: 0.5 }} /> 1
+                  </CardPrimaryButton>
+                </span>
+              </Tooltip>
             </Grid>
           </>
         )}
