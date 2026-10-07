@@ -90,7 +90,9 @@ Tests live in [cardData.test.ts](../src/settings/cardData.test.ts) and
 [App.test.tsx](../src/App.test.tsx). Run the required gates with:
 
 ```bash
-npm test -- --watchAll=false
+npm test
+npm run typecheck
+npm run lint
 npm run build
 ```
 
