@@ -37,6 +37,7 @@ const App = () => {
   const playerDeck = useDeck(playerCards);
   const opponentDeck = useDeck(opponentCards);
   const [objectiveCards, setObjectiveCards] = useState<PlayerCard[]>([]);
+  const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
   const [resourceAmount, setResourceAmount] = useState({
     black: 0,
     blue: 0,
@@ -65,7 +66,13 @@ const App = () => {
       });
       return updated;
     });
+    setProspect(entry);
     playerDeck.discard(entry.id);
+  };
+
+  const clearPlayerCards = () => {
+    setProspect(null);
+    playerDeck.clear();
   };
 
   const addResourceFromFateCard = (entry: DrawnCard<FateCard>) => {
@@ -283,13 +290,19 @@ const App = () => {
                   justifyContent='space-between'
                 >
                   <AppPrimaryText>Player Cards</AppPrimaryText>
-                  <AppPrimaryButton aria-label='Clear Player Cards' onClick={playerDeck.clear}>
+                  <AppPrimaryButton aria-label='Clear Player Cards' onClick={clearPlayerCards}>
                     Clear
                   </AppPrimaryButton>
                 </Grid>
                 <AppPrimaryButton onClick={playerDeck.draw}>
                   Draw Player Card
                 </AppPrimaryButton>
+                {prospect && (
+                  <section aria-label='Current Prospect'>
+                    <AppPrimaryText>Prospect</AppPrimaryText>
+                    <PlayerCardContainer card={prospect.card} isProspect />
+                  </section>
+                )}
                 {playerDeck.drawnCards.map((entry) => (
                     <PlayerCardContainer
                       key={`player-${entry.id}`}
