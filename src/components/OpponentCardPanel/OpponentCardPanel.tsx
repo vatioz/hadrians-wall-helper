@@ -33,7 +33,7 @@ const OpponentCardPanel: React.FC<Props> = ({
     <ResourceCounterCard>
       <Grid item container direction='row' justifyContent='space-between'>
         <AppPrimaryText>Opponent Cards</AppPrimaryText>
-        <Tooltip describeChild title='After resolving the invasion, remove Neutral cards, placements and extra draws. No refunds or reshuffling.'>
+        <Tooltip describeChild disableInteractive title='After resolving the invasion, remove Neutral cards, placements and extra draws. No refunds or reshuffling.'>
           <AppPrimaryButton onClick={clearOpponentCards}>Clear Neutral Cards</AppPrimaryButton>
         </Tooltip>
       </Grid>

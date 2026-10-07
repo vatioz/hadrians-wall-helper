@@ -97,5 +97,22 @@ npm run build
 A passing test run does not resolve the remaining reference gaps above and must
 not be reported as a complete card-face audit or complete Phase 1 coverage.
 
-Verified on 2026-10-07: the full test command passed with all 55 tests passing
-and none skipped; the production build compiled successfully.
+## Prospect Retention (Issue #13)
+
+- [x] Real App interactions assign Path and Prospect in either order. Path
+  selection grants no resources; the retained objective and scoring reference
+  remain visible (PDF pp. 4-5, 23).
+- [x] Trainer grants one Purple and one Brick, retaining its name, Trade Good 4,
+  and S Scouting Pattern (PDF p. 5). The Prospect has no reward or Path controls,
+  including after unrelated draws and resource changes.
+- [x] Choosing another Prospect explicitly replaces the retained card. Player
+  Clear removes both the Prospect and unchosen display without losing Paths or
+  replenishing the Player pile. Automatic Year advancement remains deferred.
+
+These checks are in [App.prospect.test.tsx](../src/App.prospect.test.tsx).
+The boundaries above describe the earlier reference/deck work, not this follow-up.
+The missing independent references and incomplete Phase 3 work still leave #12 open.
+
+Verified on 2026-10-07: the full test command passed with all 63 tests passing
+and none skipped; the production build compiled successfully. Existing retained
+Path list-key and stale browser-data warnings remain outside this change.

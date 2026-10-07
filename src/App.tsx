@@ -37,6 +37,7 @@ const App = () => {
   const playerDeck = useDeck(playerCards);
   const opponentDeck = useDeck(opponentCards);
   const [objectiveCards, setObjectiveCards] = useState<PlayerCard[]>([]);
+const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
   const [resourceState, setResourceState] = useState({
     amount: { black: 0, blue: 0, purple: 0, yellow: 0, brick: 0 },
     neutralUses: {} as Record<number, NeutralCardUsage>,
@@ -63,7 +64,13 @@ const App = () => {
       });
       return { ...current, amount: updated };
     });
+    setProspect(entry);
     playerDeck.discard(entry.id);
+  };
+
+  const clearPlayerCards = () => {
+    setProspect(null);
+    playerDeck.clear();
   };
 
   const addResourceFromFateCard = (entry: DrawnCard<FateCard>) => {
@@ -268,7 +275,7 @@ const App = () => {
                   justifyContent='space-between'
                 >
                   <AppPrimaryText>Fate Cards</AppPrimaryText>
-                  <Tooltip describeChild title='Remove revealed Fate cards and attack totals after resolving the invasion. Do not reshuffle the deck.'>
+                  <Tooltip describeChild disableInteractive title='Remove revealed Fate cards and attack totals after resolving the invasion. Do not reshuffle the deck.'>
                     <AppPrimaryButton onClick={fateDeck.clear}>
                       Clear Invasion
                     </AppPrimaryButton>
@@ -311,8 +318,8 @@ const App = () => {
                   justifyContent='space-between'
                 >
                   <AppPrimaryText>Player Cards</AppPrimaryText>
-                  <Tooltip describeChild title='Remove displayed Player cards for the next Year; keep Paths and the remaining deck.'>
-                    <AppPrimaryButton onClick={playerDeck.clear}>
+                  <Tooltip describeChild disableInteractive title='Remove displayed Player cards for the next Year; keep Paths and the remaining deck.'>
+                    <AppPrimaryButton onClick={clearPlayerCards}>
                       Clear Player Cards
                     </AppPrimaryButton>
                   </Tooltip>
@@ -320,6 +327,12 @@ const App = () => {
                 <AppPrimaryButton onClick={playerDeck.draw}>
                   Draw Player Card
                 </AppPrimaryButton>
+                {prospect && (
+                  <section aria-label='Current Prospect'>
+                    <AppPrimaryText>Prospect</AppPrimaryText>
+                    <PlayerCardContainer card={prospect.card} isProspect />
+                  </section>
+                )}
                 {playerDeck.drawnCards.map((entry) => (
                     <PlayerCardContainer
                       key={`player-${entry.id}`}

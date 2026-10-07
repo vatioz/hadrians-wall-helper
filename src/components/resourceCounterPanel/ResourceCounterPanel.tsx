@@ -19,7 +19,7 @@ const ResourceCounterPanel: React.FC<Props> = ({
     <ResourceCounterCard key={`card-resource`}>
       <Grid item container direction='row' justifyContent='space-between'>
         <AppPrimaryText>Resource</AppPrimaryText>
-        <Tooltip describeChild title='Set available resource counters to zero; keep cards, Neutral placements and Paths.'>
+        <Tooltip describeChild disableInteractive title='Set available resource counters to zero; keep cards, Neutral placements and Paths.'>
           <AppPrimaryButton onClick={resetResourceAmount}>Zero Resources</AppPrimaryButton>
         </Tooltip>
       </Grid>
