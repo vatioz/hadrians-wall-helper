@@ -50,6 +50,9 @@ such as `toBeInTheDocument` are loaded automatically by `src/setupTests.ts`.
 `src/App.test.tsx` renders the real app without mocking its components and covers
 card draws, resources, and independent deck controls. Vitest uses jsdom and the
 setup configured in `vite.config.ts`. Use `npm run test:watch` during development.
+For user interactions, create a `userEvent.setup()` session inside each test and
+await its actions. Keep direct `fireEvent` calls for intentional batched-event
+regressions that must exercise multiple updates in the same `act` scope.
 
 See the [rule-backed coverage checklist](docs/testing.md) for issue #12's
 Phase 1 checks, source pages, and unresolved reference gaps.
