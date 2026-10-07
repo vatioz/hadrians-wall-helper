@@ -25,6 +25,7 @@ import PlayerCardContainer from './components/playerCard';
 import { nanoid } from 'nanoid';
 import ResourceCounterPanel from './components/resourceCounterPanel';
 import OpponentCardPanel from './components/OpponentCardPanel';
+import { DrawnCard, useDeck } from './hooks/useDeck';
 
 const muiTheme = createTheme({
   typography: {
@@ -33,18 +34,9 @@ const muiTheme = createTheme({
 });
 
 const App = () => {
-  const [initialFateCards, setInitialFateCards] = useState<FateCard[]>(
-    fateCards.sort(() => Math.random() - 0.5),
-  );
-  const [initialPlayerCards, setInitialPlayerCards] = useState<PlayerCard[]>(
-    playerCards.sort(() => Math.random() - 0.5),
-  );
-  const [initialOpponentCards, setInitialOpponentCards] = useState<PlayerCard[]>(
-    opponentCards.sort(() => Math.random() - 0.5),
-  );
-  const [pickedFateCards, setPickedFateCards] = useState<FateCard[]>([]);
-  const [pickedPlayerCards, setPickedPlayerCards] = useState<PlayerCard[]>([]);
-  const [pickedOpponentCards, setPickedOpponentCards] = useState<PlayerCard[]>([]);
+  const fateDeck = useDeck(fateCards);
+  const playerDeck = useDeck(playerCards);
+  const opponentDeck = useDeck(opponentCards);
   const [objectiveCards, setObjectiveCards] = useState<PlayerCard[]>([]);
   const [resourceAmount, setResourceAmount] = useState({
     black: 0,
@@ -54,116 +46,34 @@ const App = () => {
     brick: 0,
   });
 
-  const [pictDirectionCount, setPictDirectionCount] = useState({
-    left: 0,
-    center: 0,
-    right: 0,
-  });
+  const pictDirectionCount = fateDeck.drawnCards.reduce((counts, { card }) => ({
+    ...counts,
+    [card.picts_direction]: counts[card.picts_direction] + 1,
+  }), { left: 0, center: 0, right: 0 });
 
-  const randomFateCard = () => {
-    if (initialFateCards.length === 0) {
-      const newSetFateCards = fateCards.sort(() => Math.random() - 0.5);
-      const fateCard = newSetFateCards[0];
-      const fateCardDirection = fateCard.picts_direction;
-      const newDirectionCount = {
-        ...pictDirectionCount,
-        [fateCardDirection]: pictDirectionCount[fateCardDirection] + 1,
-      };
-      setPictDirectionCount(newDirectionCount);
-      setPickedFateCards([fateCard, ...pickedFateCards]);
-      const afterRemovedInitialFateCards = newSetFateCards.slice(1);
-      setInitialFateCards(afterRemovedInitialFateCards);
-    } else {
-      const fateCard = initialFateCards[0];
-      const fateCardDirection = fateCard.picts_direction;
-      const newDirectionCount = {
-        ...pictDirectionCount,
-        [fateCardDirection]: pictDirectionCount[fateCardDirection] + 1,
-      };
-      setPictDirectionCount(newDirectionCount);
-      setPickedFateCards([fateCard, ...pickedFateCards]);
-      const afterRemovedInitialFateCards = initialFateCards.slice(1);
-      setInitialFateCards(afterRemovedInitialFateCards);
-    }
-  };
-
-  const resetDrewFateCards = () => {
-    setPictDirectionCount({
-      left: 0,
-      center: 0,
-      right: 0,
-    });
-    setPickedFateCards([]);
-  };
-
-  const randomPlayerCard = () => {
-    if (initialPlayerCards.length === 0) {
-      const newSetPlayerCards = playerCards.sort(() => Math.random() - 0.5);
-      const playerCard = newSetPlayerCards[0];
-      setPickedPlayerCards([playerCard, ...pickedPlayerCards]);
-      const afterRemovedInitialPlayerCards = newSetPlayerCards.slice(1);
-      setInitialPlayerCards(afterRemovedInitialPlayerCards);
-    } else {
-      const playerCard = initialPlayerCards[0];
-      setPickedPlayerCards([playerCard, ...pickedPlayerCards]);
-      const afterRemovedInitialPlayerCards = initialPlayerCards.slice(1);
-      setInitialPlayerCards(afterRemovedInitialPlayerCards);
-    }
-  };
-
-  const resetDrewPlayerCards = () => {
-    setPickedPlayerCards([]);
-  };
-
-  const randomOpponentCard = () => {
-    if (initialOpponentCards.length === 0) {
-      const newSetOpponentCards = opponentCards.sort(() => Math.random() - 0.5);
-      const opponentCard = newSetOpponentCards[0];
-      setPickedOpponentCards([opponentCard, ...pickedOpponentCards]);
-      const afterRemovedInitialOpponentCards = newSetOpponentCards.slice(1);
-      setInitialOpponentCards(afterRemovedInitialOpponentCards);
-    } else {
-      const opponentCard = initialOpponentCards[0];
-      setPickedOpponentCards([opponentCard, ...pickedOpponentCards]);
-      const afterRemovedInitialOpponentCards = initialOpponentCards.slice(1);
-      setInitialOpponentCards(afterRemovedInitialOpponentCards);
-    }
-  };
-
-  const resetDrewOpponentCards = () => {
-    setPickedOpponentCards([]);
-  };
-
-  const addObjectiveCard = (card: PlayerCard) => {
+  const addObjectiveCard = (entry: DrawnCard<PlayerCard>) => {
     if (objectiveCards.length < 6) {
-      setObjectiveCards([...objectiveCards, card]);
-      removePickedPlayerCards(card);
+      setObjectiveCards([...objectiveCards, entry.card]);
+      playerDeck.discard(entry.id);
     }
   };
 
-  const removePickedPlayerCards = (card: PlayerCard) => {
-    let afterRemovePickPlayerCards = pickedPlayerCards.filter(
-      (el) => el.name !== card.name,
-    );
-    setPickedPlayerCards(afterRemovePickPlayerCards);
-  };
-
-  const addResourceFromPlayerCard = (card: PlayerCard) => {
+  const addResourceFromPlayerCard = (entry: DrawnCard<PlayerCard>) => {
     const current = resourceAmount;
-    card.resources.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
+    entry.card.resources.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
       current[resource] = current[resource] + 1;
     });
     setResourceAmount(current);
-    removePickedPlayerCards(card);
+    playerDeck.discard(entry.id);
   };
 
-  const addResourceFromFateCard = (card: FateCard) => {
+  const addResourceFromFateCard = (entry: DrawnCard<FateCard>) => {
     const current = resourceAmount;
-    card.resource.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
+    entry.card.resource.forEach((resource: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
       current[resource] = current[resource] + 1;
     });
     setResourceAmount(current);
-    removePickedFateCards(card);
+    fateDeck.discard(entry.id);
   };
 
   const resetResourceAmount = () => {
@@ -176,29 +86,9 @@ const App = () => {
     });
   };
 
-  const removePickedFateCards = (card: FateCard) => {
-    let afterRemovePickFateCards = pickedFateCards.filter(
-      (el) => JSON.stringify(el) !== JSON.stringify(card),
-    );
-    const newDirectionCount = {
-      ...pictDirectionCount,
-      [card.picts_direction]: pictDirectionCount[card.picts_direction] - 1,
-    };
-    setPictDirectionCount(newDirectionCount);
-    setPickedFateCards(afterRemovePickFateCards);
-  };
-
   const sortByArrow = () => {
-    const allLeft = pickedFateCards.filter(
-      (el) => el.picts_direction === 'left',
-    );
-    const allCenter = pickedFateCards.filter(
-      (el) => el.picts_direction === 'center',
-    );
-    const allRight = pickedFateCards.filter(
-      (el) => el.picts_direction === 'right',
-    );
-    setPickedFateCards([...allLeft, ...allCenter, ...allRight]);
+    const directions = ['left', 'center', 'right'];
+    fateDeck.sort((left, right) => directions.indexOf(left.picts_direction) - directions.indexOf(right.picts_direction));
   };
 
   const changeResourceAmountByKey = (key: string, amount: number) => {
@@ -210,7 +100,7 @@ const App = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  console.log(pickedPlayerCards);
+  console.log(playerDeck.drawnCards.map((entry) => entry.card));
 
   return (
     <ThemeProvider theme={muiTheme}>
@@ -337,9 +227,9 @@ const App = () => {
                 changeResourceAmountByKey={changeResourceAmountByKey}
               />
               <OpponentCardPanel
-                opponentCards={pickedOpponentCards}
-                clearOpponentCards={resetDrewOpponentCards}
-                randomOpponentCard={randomOpponentCard}
+                opponentCards={opponentDeck.drawnCards.map((entry) => entry.card)}
+                clearOpponentCards={opponentDeck.clear}
+                randomOpponentCard={opponentDeck.draw}
               />
             </Grid>
             <Grid item xs={12} md={4}>
@@ -351,7 +241,7 @@ const App = () => {
                   justifyContent='space-between'
                 >
                   <AppPrimaryText>Fate Cards</AppPrimaryText>
-                  <AppPrimaryButton onClick={resetDrewFateCards}>
+                  <AppPrimaryButton aria-label='Clear Fate Cards' onClick={fateDeck.clear}>
                     Clear
                   </AppPrimaryButton>
                 </Grid>
@@ -367,19 +257,18 @@ const App = () => {
                     </RoundSecondaryText>
                   ))}
                 </Grid>
-                <AppPrimaryButton onClick={randomFateCard}>
+                <AppPrimaryButton onClick={fateDeck.draw}>
                   Draw Fate Card
                 </AppPrimaryButton>
                 <AppPrimaryButton onClick={sortByArrow}>
                   Sort By Arrow
                 </AppPrimaryButton>
-                {pickedFateCards &&
-                  pickedFateCards.map((card) => (
+                {fateDeck.drawnCards.map((entry) => (
                     <FateCardContainer
                       key={`${nanoid()}-card`}
-                      card={card}
-                      addResourceFromFateCard={addResourceFromFateCard}
-                      removePickedFateCards={removePickedFateCards}
+                      card={entry.card}
+                      addResourceFromFateCard={() => addResourceFromFateCard(entry)}
+                      removePickedFateCards={() => fateDeck.discard(entry.id)}
                     />
                   ))}
               </FateCardSection>
@@ -393,20 +282,19 @@ const App = () => {
                   justifyContent='space-between'
                 >
                   <AppPrimaryText>Player Cards</AppPrimaryText>
-                  <AppPrimaryButton onClick={resetDrewPlayerCards}>
+                  <AppPrimaryButton aria-label='Clear Player Cards' onClick={playerDeck.clear}>
                     Clear
                   </AppPrimaryButton>
                 </Grid>
-                <AppPrimaryButton onClick={randomPlayerCard}>
+                <AppPrimaryButton onClick={playerDeck.draw}>
                   Draw Player Card
                 </AppPrimaryButton>
-                {pickedPlayerCards &&
-                  pickedPlayerCards.map((card) => (
+                {playerDeck.drawnCards.map((entry) => (
                     <PlayerCardContainer
                       key={`${nanoid()}-card`}
-                      card={card}
-                      addObjectiveCard={addObjectiveCard}
-                      addResourceFromPlayerCard={addResourceFromPlayerCard}
+                      card={entry.card}
+                      addObjectiveCard={() => addObjectiveCard(entry)}
+                      addResourceFromPlayerCard={() => addResourceFromPlayerCard(entry)}
                       isPathFull={objectiveCards.length >= 6}
                     />
                   ))}

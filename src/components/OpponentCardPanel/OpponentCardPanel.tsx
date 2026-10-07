@@ -19,7 +19,7 @@ const OpponentCardPanel: React.FC<Props> = ({
     <ResourceCounterCard>
       <Grid item container direction='row' justifyContent='space-between'>
         <AppPrimaryText>Opponent Cards</AppPrimaryText>
-        <AppPrimaryButton onClick={clearOpponentCards}>Clear</AppPrimaryButton>
+        <AppPrimaryButton aria-label='Clear Opponent Cards' onClick={clearOpponentCards}>Clear</AppPrimaryButton>
       </Grid>
       <AppPrimaryButton onClick={randomOpponentCard}>
         Draw Opponent Card

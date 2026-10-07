@@ -1,9 +1,10 @@
 # Rule-Backed Coverage
 
-This checklist covers issue #12, Phase 1 only. Tests observe the exported card
-and round reference data. Expectations are literal values checked against the
-rulebook's native text and illustrations, with physical-deck confirmation noted
-below; tests do not read the local PDF, extractions, or image files.
+This checklist covers issue #12's Phase 1 and the shared deck work from issue
+#4 (Phase 2). Tests observe exported reference data, the shared deck hook, and
+real App interactions. Card-reference expectations are literal values checked
+against the rulebook's native text and illustrations, with physical-deck
+confirmation noted below. Tests do not read local rulebook artifacts.
 
 ## Completed Rule Checks
 
@@ -40,6 +41,33 @@ below; tests do not read the local PDF, extractions, or image files.
   `Line`, `Square`, `T`, `L`, and `S` vocabulary. Valid labels alone do not
   establish that each unseen printed pattern was transcribed correctly.
 
+## Deck Integrity (Issue #4)
+
+- [x] A copied Fisher-Yates shuffle preserves the source and card multiplicity.
+  Deterministic tests cover both zero and the upper end of the random range;
+  statistical shuffle tests are not used.
+- [x] Drawing consumes exactly one card and displays a distinct draw instance.
+  Batched draws consume consecutive cards rather than losing updates.
+- [x] Every card in a pile is consumed before that pile reshuffles; no instance
+  repeats within a cycle.
+- [x] Player, Neutral, and Fate hooks have independent piles and displayed lists,
+  including across drawing, clearing, and reshuffling.
+- [x] Clearing the display and discarding cards do not replenish a pile.
+- [x] Discarding one instance preserves equal-content instances. Repeating a
+  discard does not remove another instance.
+- [x] Display sorting preserves instance identities, the previous displayed
+  array, and the remaining pile.
+- [x] Real App regressions verify that rendering never mutates imported decks
+  and all three draw/clear controls continue consuming their separate piles.
+  Fate discard also updates its displayed attack total.
+- [ ] Confirm the Player/Neutral exhaustion policy for a six-Year game before
+  enforcing extra-year restrictions. The hook preserves the existing generic
+  behavior: the next draw after exhaustion shuffles a fresh copy of that source.
+  Clear only clears displayed cards; it is not a shuffle or refill command.
+
+The shared public interface is in [useDeck.ts](../src/hooks/useDeck.ts), with
+focused tests in [useDeck.test.ts](../src/hooks/useDeck.test.ts).
+
 ## Remaining Phase 1 Gaps
 
 - [ ] Easy, Medium, Hard, and Valour values for Years 1, 2, 4, 5, and 6
@@ -52,12 +80,14 @@ below; tests do not read the local PDF, extractions, or image files.
 
 ## Boundaries And Verification
 
-Deck refactoring and draw/shuffle behavior, persistence, Prospect retention,
-Neutral usage, automatic Year sequencing, and UI workflows are outside this
-Phase 1 work. Completing the checks above does not complete issue #12.
+Resource-state fixes (#2), card-list key changes (#3), persistence, Prospect
+retention, Neutral usage, and automatic Year sequencing remain outside this
+work. Draw-instance identities are used for deck operations; the separate UI
+card-list identity work is not claimed complete. Issue #12 remains incomplete.
 
 Tests live in [cardData.test.ts](../src/settings/cardData.test.ts) and
-[rounds.test.ts](../src/settings/rounds.test.ts). Run the required gates with:
+[rounds.test.ts](../src/settings/rounds.test.ts), with deck integration tests in
+[App.test.tsx](../src/App.test.tsx). Run the required gates with:
 
 ```bash
 npm test -- --watchAll=false
@@ -67,5 +97,5 @@ npm run build
 A passing test run does not resolve the remaining reference gaps above and must
 not be reported as a complete card-face audit or complete Phase 1 coverage.
 
-Verified on 2026-10-06: the full test command passed with all 45 tests passing
+Verified on 2026-10-07: the full test command passed with all 55 tests passing
 and none skipped; the production build compiled successfully.
