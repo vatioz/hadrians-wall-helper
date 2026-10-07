@@ -8,3 +8,8 @@ export interface PlayerCard {
   goods: string;
   scout: 'Line' | 'Square' | 'T' | 'L' | 'S';
 }
+
+export interface NeutralCardUsage {
+  resources: number;
+  soldiers: number;
+}

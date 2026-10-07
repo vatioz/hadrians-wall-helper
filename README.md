@@ -2,6 +2,42 @@
 
 A solo helper app for the board game Hadrian's Wall.
 
+## Neutral Actions
+
+Neutral cards appear in the Opponent Cards panel. Buy Goods spends one Resource
+from the Brick counter; Scout spends one Soldier from the Black counter. Do not
+also deduct those costs manually. Buttons show a cost of one and explain payment
+in tooltips; actions are unavailable without the corresponding resource.
+
+Every paid use adds a placement to that card and one Extra Invasion Draw. Repeated
+uses accumulate, including across multiple cards (rulebook PDF pp. 13, 19, 22;
+resource symbols on p. 24). The helper does not automatically draw Fate cards or
+validate sheet prerequisites.
+
+After resolving the invasion, clear the Neutral cards to remove their placements
+and pending extra draws. Cleanup does not refund spent resources, remove Player
+Paths, or replenish any deck. Clearing resource counters does not erase placements.
+
+App regressions cover exact payments, repeated and cross-card totals, stable draw
+instances, disabled-action tooltips, cleanup, and protection against batched
+overspending. These tests do not depend on local rulebook files.
+
+## Manual Cleanup
+
+Cleanup buttons explain their effects on hover, keyboard focus, or touch-and-hold:
+
+- **Clear Player Cards:** remove the displayed Player cards for the next Year;
+	retain Paths and the remaining pile.
+- **Clear Neutral Cards:** after invasion resolution, remove Neutral cards,
+	placements and extra draws without refunding payments.
+- **Clear Invasion:** remove revealed Fate cards and their attack totals.
+- **Zero Resources:** zero available counters without removing cards, placements
+	or Paths.
+
+None of these actions reshuffles or replenishes a deck, starts a new game, or
+advances the Year. The next draw continues from the remaining pile; drawing from
+an exhausted pile still automatically reshuffles that source deck.
+
 ## Getting Started
 
 ### Prerequisites

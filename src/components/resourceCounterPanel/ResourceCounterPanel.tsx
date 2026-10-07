@@ -1,5 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
+import Tooltip from '@mui/material/Tooltip';
 import { AppPrimaryButton, AppPrimaryText, ResourceCounterCard } from '../../App.styled';
 import ResourceCounterSet from '../resourceCounterSet';
 
@@ -18,7 +19,9 @@ const ResourceCounterPanel: React.FC<Props> = ({
     <ResourceCounterCard key={`card-resource`}>
       <Grid container direction='row' sx={{ justifyContent: 'space-between' }}>
         <AppPrimaryText>Resource</AppPrimaryText>
-        <AppPrimaryButton onClick={resetResourceAmount}>Clear</AppPrimaryButton>
+        <Tooltip describeChild disableInteractive title='Set available resource counters to zero; keep cards, Neutral placements and Paths.'>
+          <AppPrimaryButton onClick={resetResourceAmount}>Zero Resources</AppPrimaryButton>
+        </Tooltip>
       </Grid>
       <ResourceCounterSet
         resourceAmount={resourceAmount}
