@@ -6,7 +6,7 @@ A solo helper app for the board game Hadrian's Wall.
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js 24 LTS (the development container includes it)
 - npm
 
 ### Installation
@@ -65,7 +65,7 @@ The build output will be in the `build/` folder, ready for deployment.
 
 ## Tech Stack
 
-- React 18
+- React 19
 - TypeScript
 - Material-UI v5
 - Styled Components
