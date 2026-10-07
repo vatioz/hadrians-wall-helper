@@ -103,6 +103,19 @@ Vite preserves the `/hadrians-wall-helper/` GitHub Pages base path. Preview the
 production output with `npm run preview` and open
 [http://localhost:4173/hadrians-wall-helper/](http://localhost:4173/hadrians-wall-helper/).
 
+### Deployment
+
+The `Validate and Deploy Pages` workflow installs dependencies, runs tests and
+lint, checks high-severity audit findings, and builds the app. Pull requests only
+validate; pushes to `main` publish `build/` to GitHub Pages.
+
+Before the first Actions deployment, set **Settings > Pages > Build and deployment >
+Source** to **GitHub Actions**. The site remains at
+[https://vatioz.github.io/hadrians-wall-helper/](https://vatioz.github.io/hadrians-wall-helper/).
+Once the workflow is on `main`, use **Actions > Validate and Deploy Pages > Run workflow**
+with the `main` branch to retry a deployment manually. No local deployment token
+or `gh-pages` CLI is needed.
+
 ## Tech Stack
 
 - React 19
