@@ -103,8 +103,6 @@ const App = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  console.log(playerDeck.drawnCards.map((entry) => entry.card));
-
   return (
     <ThemeProvider theme={muiTheme}>
       <AppGradientWrapper>
