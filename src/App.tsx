@@ -11,6 +11,7 @@ import {
   ObjectiveScoreText,
   PlayerCardSection,
   RoundPrimaryText,
+  RoundReferenceGrid,
   RoundSecondaryText,
   RoundTrackContainer,
 } from './App.styled';
@@ -140,14 +141,13 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
             <AppPrimaryText>Hadrian's Wall Solo Helper</AppPrimaryText>
           </AppHeaderContainer>
           <RoundTrackContainer>
-            <Grid container spacing={3}>
+            <RoundReferenceGrid role='region' aria-label='Round reference'>
               {rounds &&
                 rounds.map((round) => (
-                  <Grid
-                    container
-                    sx={{ flexDirection: 'column', alignItems: 'center' }}
-                    size={2}
-                    spacing={0}
+                  <Stack
+                    role='group'
+                    aria-label={`Round ${round.round}`}
+                    sx={{ alignItems: 'center', minWidth: 0 }}
                     key={`${round.round}-round`}
                   >
                     <RoundPrimaryText>Round {round.round}</RoundPrimaryText>
@@ -201,9 +201,9 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                         </RoundSecondaryText>
                       </Grid>
                     </Stack>
-                  </Grid>
+                  </Stack>
                 ))}
-            </Grid>
+            </RoundReferenceGrid>
             <Divider />
             <Grid container spacing={3}>
               {objectiveCards &&
