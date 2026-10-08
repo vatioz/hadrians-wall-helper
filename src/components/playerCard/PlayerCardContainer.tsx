@@ -135,45 +135,12 @@ const PlayerCardContainer: React.FC<Props> = ({
         </Grid>
         {!isAI && (
           <Grid container direction='row'>
-            {card.resources.map((d: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
-              switch (d) {
-                case 'black':
-                  return (
-                    <ColorSquare
-                      key={`${d}-${card.name}-${Math.random() * 20}`}
-                      color={d}
-                    />
-                  );
-                case 'blue':
-                  return (
-                    <ColorSquare
-                      key={`${d}-${card.name}-${Math.random() * 20}`}
-                      color={d}
-                    />
-                  );
-                case 'purple':
-                  return (
-                    <ColorSquare
-                      key={`${d}-${card.name}-${Math.random() * 20}`}
-                      color={d}
-                    />
-                  );
-                case 'yellow':
-                  return (
-                    <ColorSquare
-                      key={`${d}-${card.name}-${Math.random() * 20}`}
-                      color={d}
-                    />
-                  );
-                default:
-                  return (
-                    <ColorSquare
-                      key={`${d}-${card.name}-${Math.random() * 20}`}
-                      color={'grey'}
-                    />
-                  );
-              }
-            })}
+            {card.resources.map((resource, index) => (
+              <ColorSquare
+                key={`${resource}-${index}`}
+                color={resource === 'brick' ? 'grey' : resource}
+              />
+            ))}
           </Grid>
         )}
         {!isAI && !isProspect && (
