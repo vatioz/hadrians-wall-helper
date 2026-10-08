@@ -2,6 +2,14 @@
 
 A solo helper app for the board game Hadrian's Wall.
 
+## Official Rules
+
+Get the rulebook from [Garphill Games' official Hadrian's Wall page](https://garphill.com/games/hadrians-wall).
+The game is also listed by [Renegade Game Studios](https://renegadegamestudios.com/hadrian-s-wall/).
+This repository and the helper's published site do not host the copyrighted
+rulebook or its extracted text and images. For private, local reference work,
+see the [local extraction guide](rulebook/README.md).
+
 ## Neutral Actions
 
 Neutral cards appear in the Opponent Cards panel. Buy Goods spends one Resource

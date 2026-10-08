@@ -1,9 +1,19 @@
 # Rulebook Reference
 
-The source is [HadriansWallRulebook.pdf](HadriansWallRulebook.pdf), a 24-page,
-unencrypted PDF created in August 2020. Extraction outputs live in `extracted/`.
-The original PDF and generated files are ignored by Git and remain local;
-this guide and the extraction script can be committed.
+Obtain the rulebook from [Garphill Games' official Hadrian's Wall page](https://garphill.com/games/hadrians-wall).
+The copyrighted PDF is not supplied by this repository or its published site.
+
+## Local-Only Setup
+
+For private reference work, place your lawfully obtained copy at
+`rulebook/HadriansWallRulebook.pdf`. The extraction script reads that path and
+writes to `rulebook/extracted/`; both are ignored by Git. Do not commit the PDF
+or generated text, HTML, images, or OCR, and do not copy them into `public/` or
+`build/`. Only this guide and the extraction script belong in source control.
+
+The output descriptions below refer to the 24-page, unencrypted August 2020
+rulebook used for the original local extraction. File links below work only
+after generating the outputs locally; they are not hosted downloads.
 
 ## Reading the Rules
 
