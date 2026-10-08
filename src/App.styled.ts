@@ -151,12 +151,22 @@ export const RoundTrackContainer = styled.div`
   padding: 1em;
   background: rgba(255, 255, 255, 0.4);
   border-radius: 16px;
-  min-width: fit-content;
+  min-width: 0;
   margin: 1em;
   width: auto;
 
   @media (min-width: 768px) {
     padding: 1.25em;
+  }
+`;
+
+export const RoundReferenceGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 1.5em;
+
+  @media (min-width: 900px) {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 `;
 

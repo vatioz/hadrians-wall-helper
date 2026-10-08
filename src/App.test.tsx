@@ -45,6 +45,30 @@ test('renders the solo helper with its card draw controls', () => {
   expect(screen.getByRole('button', { name: /draw fate card/i })).toBeInTheDocument();
 });
 
+test('the round reference keeps all six Years and their labeled values grouped', () => {
+  render(<App />);
+
+  const reference = within(screen.getByRole('region', { name: 'Round reference' }));
+  expect(reference.getAllByRole('group')).toHaveLength(6);
+  const expectedValues = [
+    [1, 1, 1, 1],
+    [2, 2, 3, 2],
+    [3, 4, 5, 2],
+    [4, 6, 7, 3],
+    [6, 8, 9, 3],
+    [8, 10, 12, 4],
+  ];
+
+  expectedValues.forEach((values, index) => {
+    const year = within(reference.getByRole('group', { name: `Round ${index + 1}` }));
+    expect(year.getByText(`Round ${index + 1}`)).toBeInTheDocument();
+    ['Easy', 'Medium', 'Hard', 'Valour'].forEach((label, valueIndex) => {
+      const row = year.getByText(label).parentElement!;
+      expect(within(row).getByText(String(values[valueIndex]))).toBeInTheDocument();
+    });
+  });
+});
+
 test.each([
   { deck: 'Player', action: 'As Path' },
   { deck: 'Fate', action: 'Discard' },
