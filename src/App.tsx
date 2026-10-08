@@ -36,7 +36,7 @@ const App = () => {
   const fateDeck = useDeck(fateCards);
   const playerDeck = useDeck(playerCards);
   const opponentDeck = useDeck(opponentCards);
-  const [objectiveCards, setObjectiveCards] = useState<PlayerCard[]>([]);
+  const [objectiveCards, setObjectiveCards] = useState<DrawnCard<PlayerCard>[]>([]);
 const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
   const [resourceState, setResourceState] = useState({
     amount: { black: 0, blue: 0, purple: 0, yellow: 0, brick: 0 },
@@ -51,7 +51,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
 
   const addObjectiveCard = (entry: DrawnCard<PlayerCard>) => {
     if (objectiveCards.length < 6) {
-      setObjectiveCards([...objectiveCards, entry.card]);
+      setObjectiveCards([...objectiveCards, entry]);
       playerDeck.discard(entry.id);
     }
   };
@@ -207,8 +207,9 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
             <Divider />
             <Grid container spacing={3}>
               {objectiveCards &&
-                objectiveCards.map((card) => (
+                objectiveCards.map(({ id, card }) => (
                   <Grid
+                    key={id}
                     container
                     sx={{ flexDirection: 'column', alignItems: 'center' }}
                     size={2}
@@ -228,7 +229,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                       sx={{ justifyContent: 'space-between', width: '100%' }}
                     >
                       {Object.entries(card.score).map(([key, val]) => (
-                        <ObjectiveScoreText fontWeight={500} fontSize={'0.8em'}>
+                        <ObjectiveScoreText key={key} fontWeight={500} fontSize={'0.8em'}>
                           {key} : {val}VP
                         </ObjectiveScoreText>
                       ))}
