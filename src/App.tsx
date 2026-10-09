@@ -212,7 +212,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                     key={id}
                     container
                     sx={{ flexDirection: 'column', alignItems: 'center' }}
-                    size={2}
+                    size={{ xs: 12, sm: 6, md: 2 }}
                     spacing={0}
                   >
                     <RoundPrimaryText>{card.name}</RoundPrimaryText>

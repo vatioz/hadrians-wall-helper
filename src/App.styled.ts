@@ -63,6 +63,7 @@ export const ObjectiveScoreText = styled.span<{
   color: ${(props) => props.color || '#c2442a'};
   font-weight: ${(props) => props.fontWeight || 500};
   font-size: ${(props) => props.fontSize || '1em'};
+  white-space: nowrap;
   /* font-size: 1em; */
 `;
 
