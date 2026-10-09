@@ -2,9 +2,33 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import App from './App';
+import playerCards from './settings/playerCards';
 
 afterEach(() => {
   vi.restoreAllMocks();
+});
+
+test('retained Path groups use responsive widths and keep complete scoring thresholds together', () => {
+  vi.spyOn(Math, 'random').mockReturnValue(0);
+  render(<App />);
+  const draw = screen.getByRole('button', { name: 'Draw Player Card' });
+  const names = ['Engineer', 'Planner', 'Trainer', 'Vanguard', 'Ranger', 'Forager'];
+
+  names.forEach((name, index) => {
+    fireEvent.click(draw);
+    fireEvent.click(screen.getByRole('button', { name: 'As Path' }));
+    const group = screen.getByText(name).parentElement!;
+    expect(group).toHaveClass('MuiGrid-grid-xs-12', 'MuiGrid-grid-sm-6', 'MuiGrid-grid-md-2');
+    expect(group.parentElement!.children).toHaveLength(index + 1);
+    names.slice(0, index + 1).forEach((retainedName) => {
+      const retained = within(screen.getByText(retainedName).parentElement!);
+      const card = playerCards.find((entry) => entry.name === retainedName)!;
+      expect(retained.getByText(card.objective)).toBeInTheDocument();
+      Object.entries(card.score).forEach(([threshold, points]) => {
+        expect(retained.getByText(`${threshold} : ${points}VP`)).toHaveStyle({ whiteSpace: 'nowrap' });
+      });
+    });
+  });
 });
 
 test.each([
