@@ -41,6 +41,11 @@ confirmation noted below. Tests do not read local rulebook artifacts.
   `Line`, `Square`, `T`, `L`, and `S` vocabulary. Valid labels alone do not
   establish that each unseen printed pattern was transcribed correctly.
 
+- [x] Manual resource `-` stops at zero and never displays a negative count
+  (helper control, not a game rule). Covered by a real App regression.
+- [x] A Fate card taken as resources leaves the active invasion totals and its
+  controls. Covered by a real App regression.
+
 ## Deck Integrity (Issue #4)
 
 - [x] A copied Fisher-Yates shuffle preserves the source and card multiplicity.
