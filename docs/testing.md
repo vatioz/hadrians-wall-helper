@@ -53,6 +53,9 @@ confirmation noted below. Tests do not read local rulebook artifacts.
 - [x] Player, Neutral, and Fate hooks have independent piles and displayed lists,
   including across drawing, clearing, and reshuffling.
 - [x] Clearing the display and discarding cards do not replenish a pile.
+- [x] Each Fate, Player, and Neutral draw button shows `Deck: <remaining>/<total>`
+  (#40). Drawing lowers only its own count, Clear and discard actions leave it
+  unchanged, and an empty pile shows `0/<total>`.
 - [x] Discarding one instance preserves equal-content instances. Repeating a
   discard does not remove another instance.
 - [x] Display sorting preserves instance identities, the previous displayed

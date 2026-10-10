@@ -18,6 +18,20 @@ test('shuffle can select the current position at the upper end of the random ran
   expect(source).toEqual(['Fighter', 'Ranger', 'Trainer']);
 });
 
+test('totalCount stays at the full pile size while remainingCount falls and reshuffles', () => {
+  const source = Object.freeze(['Fighter', 'Ranger']);
+  const { result } = renderHook(() => useDeck(source, () => 0));
+
+  expect(result.current.totalCount).toBe(2);
+  act(() => result.current.draw());
+  act(() => result.current.draw());
+  expect(result.current.remainingCount).toBe(0);
+  expect(result.current.totalCount).toBe(2);
+  act(() => result.current.draw());
+  expect(result.current.remainingCount).toBe(1);
+  expect(result.current.totalCount).toBe(2);
+});
+
 test('drawing displays exactly one card and consumes one card from the remaining pile', () => {
   const source = Object.freeze(['Fighter', 'Ranger', 'Trainer']);
   const { result } = renderHook(() => useDeck(source, () => 0));
