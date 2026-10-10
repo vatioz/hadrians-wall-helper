@@ -15,6 +15,7 @@ import { RightArrow } from '../../assets/icons/RightArrow';
 import { UpArrow } from '../../assets/icons/UpArrow';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 import { FateCard } from '../../settings/fateCards.model';
 import { nanoid } from 'nanoid';
 
@@ -61,12 +62,13 @@ const FateCardContainer: React.FC<Props> = ({
   addResourceFromFateCard,
   removePickedFateCards,
 }) => {
+  const { app } = useTheme().palette;
   return (
     <Stack>
       <div
         style={{
           marginTop: '0.5em',
-          border: '1px solid grey',
+          border: `1px solid ${app.outline}`,
           borderRadius: '25px',
           padding: '1em',
         }}
@@ -83,20 +85,9 @@ const FateCardContainer: React.FC<Props> = ({
           <NumberText>{card.goods}</NumberText>
         </MiddleContainer>
         <Grid container direction='row'>
-          {card.resource.map((d: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => {
-            switch (d) {
-              case 'black':
-                return <ColorSquare key={`${d}-${nanoid()}`} color={d} />;
-              case 'blue':
-                return <ColorSquare key={`${d}-${nanoid()}`} color={d} />;
-              case 'purple':
-                return <ColorSquare key={`${d}-${nanoid()}`} color={d} />;
-              case 'yellow':
-                return <ColorSquare key={`${d}-${nanoid()}`} color={d} />;
-              default:
-                return <ColorSquare key={`${d}-${nanoid()}`} color={'grey'} />;
-            }
-          })}
+          {card.resource.map((d: 'black' | 'blue' | 'purple' | 'yellow' | 'brick') => (
+            <ColorSquare key={`${d}-${nanoid()}`} color={app.resource[d]} />
+          ))}
         </Grid>
         <Grid container direction='row'>
           <CardPrimaryButton onClick={() => addResourceFromFateCard(card)}>

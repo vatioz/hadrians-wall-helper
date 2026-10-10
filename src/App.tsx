@@ -1,4 +1,5 @@
-import { createTheme, Divider, Grid, Stack, ThemeProvider, Tooltip } from '@mui/material';
+import { Divider, Grid, Stack, ThemeProvider, Tooltip } from '@mui/material';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { useState } from 'react';
 import {
   AppContainer,
@@ -26,12 +27,7 @@ import PlayerCardContainer from './components/playerCard';
 import ResourceCounterPanel from './components/resourceCounterPanel';
 import OpponentCardPanel from './components/OpponentCardPanel';
 import { DrawnCard, useDeck } from './hooks/useDeck';
-
-const muiTheme = createTheme({
-  typography: {
-    fontFamily: "'Mitr', sans-serif",
-  },
-});
+import { muiTheme } from './theme';
 
 const App = () => {
   const fateDeck = useDeck(fateCards);
@@ -134,6 +130,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
   }
 
   return (
+    <StyledThemeProvider theme={muiTheme}>
     <ThemeProvider theme={muiTheme}>
       <AppGradientWrapper>
         <AppContainer>
@@ -157,10 +154,10 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                         direction='row'
                         sx={{ justifyContent: 'space-between' }}
                       >
-                        <RoundSecondaryText color='green'>
+                        <RoundSecondaryText color={muiTheme.palette.app.difficulty.easy}>
                           Easy
                         </RoundSecondaryText>
-                        <RoundSecondaryText color='green'>
+                        <RoundSecondaryText color={muiTheme.palette.app.difficulty.easy}>
                           {round.easy}
                         </RoundSecondaryText>
                       </Grid>
@@ -169,10 +166,10 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                         direction='row'
                         sx={{ justifyContent: 'space-between' }}
                       >
-                        <RoundSecondaryText color='orange'>
+                        <RoundSecondaryText color={muiTheme.palette.app.difficulty.medium}>
                           Medium
                         </RoundSecondaryText>
-                        <RoundSecondaryText color='orange'>
+                        <RoundSecondaryText color={muiTheme.palette.app.difficulty.medium}>
                           {round.medium}
                         </RoundSecondaryText>
                       </Grid>
@@ -181,10 +178,10 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                         direction='row'
                         sx={{ justifyContent: 'space-between' }}
                       >
-                        <RoundSecondaryText color='red'>
+                        <RoundSecondaryText color={muiTheme.palette.app.difficulty.hard}>
                           Hard
                         </RoundSecondaryText>
-                        <RoundSecondaryText color='red'>
+                        <RoundSecondaryText color={muiTheme.palette.app.difficulty.hard}>
                           {round.hard}
                         </RoundSecondaryText>
                       </Grid>
@@ -193,10 +190,10 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                         direction='row'
                         sx={{ justifyContent: 'space-between' }}
                       >
-                        <RoundSecondaryText color='grey'>
+                        <RoundSecondaryText color={muiTheme.palette.app.difficulty.valour}>
                           Valour
                         </RoundSecondaryText>
-                        <RoundSecondaryText color='grey'>
+                        <RoundSecondaryText color={muiTheme.palette.app.difficulty.valour}>
                           {round.valour}
                         </RoundSecondaryText>
                       </Grid>
@@ -219,7 +216,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                     <ObjectiveExplainText
                       fontWeight={300}
                       fontSize={'0.8em'}
-                      color='black'
+                      color={muiTheme.palette.app.ink}
                     >
                       {card.objective}
                     </ObjectiveExplainText>
@@ -278,7 +275,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                   sx={{ justifyContent: 'space-between' }}
                 >
                   {Object.entries(pictDirectionCount).map(([key, val]) => (
-                    <RoundSecondaryText color={'black'} key={key}>
+                    <RoundSecondaryText color={muiTheme.palette.app.ink} key={key}>
                       {capitalizeFirstLetter(key)} : {val}
                     </RoundSecondaryText>
                   ))}
@@ -337,6 +334,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
         </AppContainer>
       </AppGradientWrapper>
     </ThemeProvider>
+    </StyledThemeProvider>
   );
 };
 
