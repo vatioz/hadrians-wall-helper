@@ -44,7 +44,7 @@ const OpponentCardPanel: React.FC<Props> = ({
       <AppPrimaryButton onClick={randomOpponentCard}>
         Draw Opponent Card
       </AppPrimaryButton>
-      <div>Deck: {deckRemaining}/{deckTotal}</div>
+      <div role='status'>Deck: {deckRemaining}/{deckTotal}</div>
       <div role='status'>Extra Invasion Draws: {extraDraws}</div>
       {opponentCards &&
         opponentCards.map(({ id, card }) => (
