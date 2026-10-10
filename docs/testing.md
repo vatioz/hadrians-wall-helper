@@ -78,9 +78,11 @@ focused tests in [useDeck.test.ts](../src/hooks/useDeck.test.ts).
 
 ## Remaining Phase 1 Gaps
 
-- [ ] Easy, Medium, Hard, and Valour values for Years 1, 2, 4, 5, and 6
-  (20 values). The full-board illustrations on PDF pp. 3 and 5 are too small
-  for a reliable transcription; a clearer Player-board reference is needed.
+- [x] Easy, Medium, Hard, and Valour values for Years 1 through 6 were read
+  from the year-track flags on PDF p. 5 at high magnification and asserted in
+  [rounds.test.ts](../src/settings/rounds.test.ts). Years 1, 2, 4, 5, and 6 are
+  read from pixels, not printed text, so a physical-board spot check is still
+  advisable.
 - [ ] A complete audit of all Player/Neutral resource rewards, Trade Goods,
   Scouting Patterns, and all Fate faces and their multiplicities. The illustrated
   examples and field-domain checks above are not a complete card-face audit.
