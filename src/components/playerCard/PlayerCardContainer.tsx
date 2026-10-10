@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Inventory2Outlined, PersonOutlined } from '@mui/icons-material';
 import ColorSquare from '../colorSquare/ColorSquare';
 import {
@@ -83,12 +84,13 @@ const PlayerCardContainer: React.FC<Props> = ({
   onUseNeutral,
 }) => {
   const mTop = isAI ? '1.25em' : '0.5em';
+  const { app } = useTheme().palette;
   return (
     <Stack component='section' aria-label={isAI ? `Neutral card ${card.name}` : undefined}>
       <div
         style={{
           marginTop: mTop,
-          border: '1px solid grey',
+          border: `1px solid ${app.outline}`,
           borderRadius: '25px',
           padding: '1em',
         }}
@@ -138,7 +140,7 @@ const PlayerCardContainer: React.FC<Props> = ({
             {card.resources.map((resource, index) => (
               <ColorSquare
                 key={`${resource}-${index}`}
-                color={resource === 'brick' ? 'grey' : resource}
+                color={app.resource[resource]}
               />
             ))}
           </Grid>

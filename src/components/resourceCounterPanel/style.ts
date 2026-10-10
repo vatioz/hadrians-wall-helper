@@ -5,7 +5,7 @@ export const ResourceCounterCard = styled.div`
   flex-direction: column; */
   /* gap: 1em; */
   padding: 1.5em;
-  background: rgba(255, 255, 255, 0.4);
+  background: ${(props) => props.theme.palette.app.surface};
   border-radius: 16px;
   /* min-width: fit-content; */
   /* max-height: fit-content; */

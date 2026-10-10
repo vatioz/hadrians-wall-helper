@@ -1,4 +1,7 @@
+import { useTheme } from '@mui/material/styles';
+
 export const UpArrow = () => {
+  const { palette } = useTheme();
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -10,7 +13,7 @@ export const UpArrow = () => {
       <g transform='translate(0,-952.36218)'>
         <path
           d='m 48.717183,975.8007 -17,13.9997 c -0.86072,0.7451 -0.93649,2.0181 -0.26562,2.8281 0.67086,0.8099 2.01818,0.9364 2.82812,0.2656 l 13.71875,-11.281 0,45.7491 c 0,1.1046 0.8954,2 2,2 1.1046,0 2,-0.8954 2,-2 l 0,-45.7491 13.71875,11.281 c 0.80994,0.6708 2.14731,0.5359 2.82812,-0.2656 0.71775,-0.8451 0.54432,-2.1573 -0.26562,-2.8281 l -17,-13.9997 c -0.97237,-0.6252 -1.70418,-0.5428 -2.5625,0 z'
-          fill='#000000'
+          fill={palette.app.ink}
           stroke='none'
           visibility='visible'
           display='inline'

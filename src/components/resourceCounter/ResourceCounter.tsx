@@ -9,6 +9,7 @@ import {
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 
 interface Props {
   colorText: string;
@@ -38,7 +39,8 @@ const ResourceCounter: React.FC<Props> = ({
     return text.charAt(0).toUpperCase() + text.slice(1);
   };
 
-  const color = textColor === 'brick' ? 'grey' : textColor;
+  const { app } = useTheme().palette;
+  const color = textColor === 'brick' ? app.resource.brick : textColor;
 
   return (
     <Stack>
@@ -54,7 +56,7 @@ const ResourceCounter: React.FC<Props> = ({
         {/* <ButtonSetContainer key={`${textColor}-button-set`}> */}
         <Grid>
           <Button onClick={minus}>-</Button>
-          <StyledNumberText color='black'>{value}</StyledNumberText>
+          <StyledNumberText color={app.ink}>{value}</StyledNumberText>
           <Button onClick={plus}>+</Button>
         </Grid>
         {/* </ButtonSetContainer> */}

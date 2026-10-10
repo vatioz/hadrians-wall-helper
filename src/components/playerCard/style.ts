@@ -39,11 +39,11 @@ export const CardPrimaryButton = styled(Button)<{ disabled?: boolean }>`
   border-radius: 20px !important;
   /* background-color: #c2442a !important; */
   background-color: ${(props) =>
-    props.disabled ? 'black' : '#c2442a'} !important;
-  color: #fff !important;
+    props.disabled ? props.theme.palette.app.ink : props.theme.palette.app.brand} !important;
+  color: ${(props) => props.theme.palette.app.onBrand} !important;
   margin: auto !important;
   &:hover {
-    background-color: #d34f34 !important;
+    background-color: ${(props) => props.theme.palette.app.brandHover} !important;
   }
 `;
 

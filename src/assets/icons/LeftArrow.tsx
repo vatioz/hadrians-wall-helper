@@ -1,4 +1,7 @@
+import { useTheme } from '@mui/material/styles';
+
 export const LeftArrow = () => {
+  const { palette } = useTheme();
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -10,7 +13,7 @@ export const LeftArrow = () => {
       <g transform='translate(0,-952.36218)'>
         <path
           d='m 23.438497,1003.645 13.9997,17 c 0.7451,0.8607 2.0181,0.9365 2.8281,0.2656 0.8099,-0.6708 0.9364,-2.0181 0.2656,-2.8281 l -11.281,-13.7187 45.74915,0 c 1.1046,0 2,-0.8954 2,-2 0,-1.1046 -0.8954,-2 -2,-2 l -45.74915,0 11.281,-13.71883 c 0.6708,-0.8099 0.5359,-2.1473 -0.2656,-2.8281 -0.8451,-0.7177 -2.1573,-0.5443 -2.8281,0.2656 l -13.9997,17.00003 c -0.6252,0.9724 -0.5428,1.7042 0,2.5625 z'
-          fill='#000000'
+          fill={palette.app.ink}
           stroke='none'
           visibility='visible'
           display='inline'
