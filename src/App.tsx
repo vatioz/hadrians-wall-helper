@@ -249,6 +249,8 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                 opponentCards={opponentDeck.drawnCards}
                 clearOpponentCards={clearNeutralCards}
                 randomOpponentCard={opponentDeck.draw}
+                deckRemaining={opponentDeck.remainingCount}
+                deckTotal={opponentDeck.totalCount}
                 neutralUses={resourceState.neutralUses}
                 canBuyGoods={resourceAmount.brick > 0}
                 canScout={resourceAmount.black > 0}
@@ -283,6 +285,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                 <AppPrimaryButton onClick={fateDeck.draw}>
                   Draw Fate Card
                 </AppPrimaryButton>
+                <div>Deck: {fateDeck.remainingCount}/{fateDeck.totalCount}</div>
                 <AppPrimaryButton onClick={sortByArrow}>
                   Sort By Arrow
                 </AppPrimaryButton>
@@ -313,6 +316,7 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
                 <AppPrimaryButton onClick={playerDeck.draw}>
                   Draw Player Card
                 </AppPrimaryButton>
+                <div>Deck: {playerDeck.remainingCount}/{playerDeck.totalCount}</div>
                 {prospect && (
                   <section aria-label='Current Prospect'>
                     <AppPrimaryText>Prospect</AppPrimaryText>

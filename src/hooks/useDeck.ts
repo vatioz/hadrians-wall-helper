@@ -60,6 +60,7 @@ export function useDeck<Card>(cards: readonly Card[], random: () => number = Mat
   return {
     drawnCards: deck.drawn,
     remainingCount: deck.remaining.length,
+    totalCount: cards.length,
     draw,
     clear,
     discard,
