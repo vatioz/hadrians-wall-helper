@@ -38,7 +38,7 @@ const createEmptyResourceState = (): ResourceState => ({
 
 const App = () => {
   const [initialSession] = useState(loadGameSession);
-  const fateDeck = useDeck(fateCards, Math.random, initialSession?.fate);
+  const fateDeck = useDeck(fateCards, Math.random, initialSession?.fate, { reshuffleWhenEmpty: true });
   const playerDeck = useDeck(playerCards, Math.random, initialSession?.player);
   const opponentDeck = useDeck(opponentCards, Math.random, initialSession?.neutral);
   const [objectiveCards, setObjectiveCards] = useState<DrawnCard<PlayerCard>[]>(initialSession?.paths ?? []);
@@ -294,6 +294,7 @@ const App = () => {
                 clearOpponentCards={clearNeutralCards}
                 randomOpponentCard={opponentDeck.draw}
                 deckRemaining={opponentDeck.remainingCount}
+                canDrawOpponentCard={opponentDeck.canDraw}
                 deckTotal={opponentDeck.totalCount}
                 neutralUses={resourceState.neutralUses}
                 canBuyGoods={resourceAmount.brick > 0}
@@ -326,7 +327,7 @@ const App = () => {
                     </RoundSecondaryText>
                   ))}
                 </Grid>
-                <AppPrimaryButton onClick={fateDeck.draw}>
+                <AppPrimaryButton onClick={fateDeck.draw} disabled={!fateDeck.canDraw}>
                   Draw Fate Card
                 </AppPrimaryButton>
                 <div>Deck: {fateDeck.remainingCount}/{fateDeck.totalCount}</div>
@@ -357,7 +358,7 @@ const App = () => {
                     </AppPrimaryButton>
                   </Tooltip>
                 </Grid>
-                <AppPrimaryButton onClick={playerDeck.draw}>
+                <AppPrimaryButton onClick={playerDeck.draw} disabled={!playerDeck.canDraw}>
                   Draw Player Card
                 </AppPrimaryButton>
                 <div>Deck: {playerDeck.remainingCount}/{playerDeck.totalCount}</div>

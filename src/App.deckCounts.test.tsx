@@ -48,7 +48,7 @@ test('clear, discard, resource and reset actions leave every deck count unchange
   expect(screen.getAllByText('Deck: 11/12')).toHaveLength(2);
 });
 
-test('an empty pile shows 0 and the next draw reshuffles it to total minus one', async () => {
+test('an empty Player pile shows 0, disables its draw button, and does not reshuffle', async () => {
   const user = userEvent.setup();
   vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
@@ -57,8 +57,17 @@ test('an empty pile shows 0 and the next draw reshuffles it to total minus one',
     await user.click(screen.getByRole('button', { name: 'Draw Player Card' }));
   }
   expect(screen.getByText('Deck: 0/12')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Draw Player Card' })).toBeDisabled();
+});
 
-  await user.click(screen.getByRole('button', { name: 'Draw Player Card' }));
-  expect(screen.getByText('Deck: 11/12')).toBeInTheDocument();
-  expect(screen.getByText('Deck: 12/12')).toBeInTheDocument();
+test('an empty Neutral pile shows 0 and disables its draw button', async () => {
+  const user = userEvent.setup();
+  vi.spyOn(Math, 'random').mockReturnValue(0);
+  render(<App />);
+
+  for (let draw = 0; draw < 12; draw += 1) {
+    await user.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
+  }
+  expect(screen.getByText('Deck: 0/12')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Draw Opponent Card' })).toBeDisabled();
 });

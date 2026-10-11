@@ -53,8 +53,9 @@ confirmation noted below. Tests do not read local rulebook artifacts.
   statistical shuffle tests are not used.
 - [x] Drawing consumes exactly one card and displays a distinct draw instance.
   Batched draws consume consecutive cards rather than losing updates.
-- [x] Every card in a pile is consumed before that pile reshuffles; no instance
-  repeats within a cycle.
+- [x] Every card in a Fate pile is consumed before that pile reshuffles, and the
+  reshuffle uses only cards not currently displayed. Player and Neutral piles
+  never reshuffle; once empty, their draw button is disabled (#41).
 - [x] Player, Neutral, and Fate hooks have independent piles and displayed lists,
   including across drawing, clearing, and reshuffling.
 - [x] Clearing the display and discarding cards do not replenish a pile.
@@ -68,10 +69,9 @@ confirmation noted below. Tests do not read local rulebook artifacts.
 - [x] Real App regressions verify that rendering never mutates imported decks
   and all three draw/clear controls continue consuming their separate piles.
   Fate discard also updates its displayed attack total.
-- [ ] Confirm the Player/Neutral exhaustion policy for a six-Year game before
-  enforcing extra-year restrictions. The hook preserves the existing generic
-  behavior: the next draw after exhaustion shuffles a fresh copy of that source.
-  Clear only clears displayed cards; it is not a shuffle or refill command.
+- [x] Player/Neutral exhaustion policy (#41, decided): the pile stops, the draw
+  button is disabled, and `Deck: 0/<total>` is shown. Clear only clears
+  displayed cards; it is not a shuffle or refill command.
 
 The shared public interface is in [useDeck.ts](../src/hooks/useDeck.ts), with
 focused tests in [useDeck.test.ts](../src/hooks/useDeck.test.ts).

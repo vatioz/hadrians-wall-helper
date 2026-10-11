@@ -100,7 +100,7 @@ test.each([
   expect(screen.getAllByRole('button', { name: action })).toEqual([newerControl]);
 });
 
-test('Neutral placements stay with their draw instance when drawing another card and repeating a deck', async () => {
+test('Neutral placements stay with their draw instance when drawing another card and exhausting the deck', async () => {
   const user = userEvent.setup();
   vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
@@ -119,17 +119,16 @@ test('Neutral placements stay with their draw instance when drawing another card
   expect(screen.getAllByRole('button', { name: 'Buy Goods' })).toContain(originalGoods);
   expect(screen.getAllByRole('button', { name: 'Scout' })).toContain(originalScout);
 
-  for (let drawCount = 2; drawCount < 13; drawCount += 1) {
+  for (let drawCount = 2; drawCount < 12; drawCount += 1) {
     await user.click(drawButton);
   }
+  expect(drawButton).toBeDisabled();
 
   const goodsControls = screen.getAllByRole('button', { name: 'Buy Goods' });
   const scoutControls = screen.getAllByRole('button', { name: 'Scout' });
-  const newerEngineer = within(screen.getAllByRole('region', { name: 'Neutral card Engineer' })[0]);
-  expect(newerEngineer.getByText('Resources placed: 0')).toBeInTheDocument();
-  expect(newerEngineer.getByText('Soldiers placed: 0')).toBeInTheDocument();
-  expect(goodsControls[12]).toBe(originalGoods);
-  expect(scoutControls[12]).toBe(originalScout);
+  expect(goodsControls).toHaveLength(12);
+  expect(goodsControls[11]).toBe(originalGoods);
+  expect(scoutControls[11]).toBe(originalScout);
 
   await user.click(screen.getAllByRole('button', { name: '+' })[0]);
   expect(originalCard.getByText('Resources placed: 1')).toBeInTheDocument();

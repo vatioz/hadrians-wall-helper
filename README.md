@@ -43,8 +43,10 @@ Cleanup buttons explain their effects on hover, keyboard focus, or touch-and-hol
 	or Paths.
 
 None of these actions reshuffles or replenishes a deck, starts a new game, or
-advances the Year. The next draw continues from the remaining pile; drawing from
-an exhausted pile still automatically reshuffles that source deck.
+advances the Year. The next draw continues from the remaining pile. Player and
+Neutral piles never reshuffle: once empty, their draw button is disabled. The
+Fate pile reshuffles when empty, using only cards that are not currently
+displayed; discarded Fate cards return to the pool.
 
 ## Getting Started
 
