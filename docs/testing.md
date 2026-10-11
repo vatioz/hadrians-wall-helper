@@ -31,6 +31,10 @@ confirmation noted below. Tests do not read local rulebook artifacts.
 - [x] The centre-attack and visible right-attack Fate cards from PDF p. 20 are
   checked for direction, Trade Good, gladiator value, and resource quantities.
   Resource comparisons preserve multiplicity without requiring array order.
+- [x] The PDF p. 20 Year 3 example (one centre and two right attacks) is
+  reproduced through the App with a deterministic shuffle and asserted to show
+  one centre and two right attacks. Fate cards are selected by their displayed
+  direction totals, so the test does not depend on shuffle order.
 
 ## Helper Contracts
 
@@ -80,9 +84,9 @@ focused tests in [useDeck.test.ts](../src/hooks/useDeck.test.ts).
 
 - [x] Easy, Medium, Hard, and Valour values for Years 1 through 6 were read
   from the year-track flags on PDF p. 5 at high magnification and asserted in
-  [rounds.test.ts](../src/settings/rounds.test.ts). Years 1, 2, 4, 5, and 6 are
-  read from pixels, not printed text, so a physical-board spot check is still
-  advisable.
+  [rounds.test.ts](../src/settings/rounds.test.ts). Years 1, 2, 4, 5, and 6 were
+  read from pixels, not printed text; the values were then confirmed against
+  the physical board by the project owner.
 - [ ] A complete audit of all Player/Neutral resource rewards, Trade Goods,
   Scouting Patterns, and all Fate faces and their multiplicities. The illustrated
   examples and field-domain checks above are not a complete card-face audit.
