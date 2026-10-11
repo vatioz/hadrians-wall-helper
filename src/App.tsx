@@ -1,6 +1,7 @@
-import { Divider, Grid, Stack, ThemeProvider, Tooltip } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Stack, ThemeProvider, Tooltip } from '@mui/material';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import {
   AppContainer,
   AppGradientWrapper,
@@ -20,7 +21,7 @@ import FateCardContainer from './components/fateCard';
 import fateCards from './settings/fateCards';
 import rounds from './settings/rounds';
 import { FateCard } from './settings/fateCards.model';
-import { NeutralCardUsage, PlayerCard } from './settings/playerCards.model';
+import { PlayerCard } from './settings/playerCards.model';
 import playerCards from './settings/playerCards';
 import opponentCards from './settings/opponentCards';
 import PlayerCardContainer from './components/playerCard';
@@ -28,18 +29,46 @@ import ResourceCounterPanel from './components/resourceCounterPanel';
 import OpponentCardPanel from './components/OpponentCardPanel';
 import { DrawnCard, useDeck } from './hooks/useDeck';
 import { muiTheme } from './theme';
+import { loadGameSession, ResourceState, saveGameSession } from './gameSession';
+
+const createEmptyResourceState = (): ResourceState => ({
+  amount: { black: 0, blue: 0, purple: 0, yellow: 0, brick: 0 },
+  neutralUses: {},
+});
 
 const App = () => {
-  const fateDeck = useDeck(fateCards);
-  const playerDeck = useDeck(playerCards);
-  const opponentDeck = useDeck(opponentCards);
-  const [objectiveCards, setObjectiveCards] = useState<DrawnCard<PlayerCard>[]>([]);
-const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
-  const [resourceState, setResourceState] = useState({
-    amount: { black: 0, blue: 0, purple: 0, yellow: 0, brick: 0 },
-    neutralUses: {} as Record<number, NeutralCardUsage>,
-  });
+  const [initialSession] = useState(loadGameSession);
+  const fateDeck = useDeck(fateCards, Math.random, initialSession?.fate);
+  const playerDeck = useDeck(playerCards, Math.random, initialSession?.player);
+  const opponentDeck = useDeck(opponentCards, Math.random, initialSession?.neutral);
+  const [objectiveCards, setObjectiveCards] = useState<DrawnCard<PlayerCard>[]>(initialSession?.paths ?? []);
+  const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(initialSession?.prospect ?? null);
+  const [resourceState, setResourceState] = useState<ResourceState>(
+    () => initialSession?.resources ?? createEmptyResourceState(),
+  );
+  const [newGameOpen, setNewGameOpen] = useState(false);
   const resourceAmount = resourceState.amount;
+
+  useEffect(() => {
+    saveGameSession({
+      resources: resourceState,
+      paths: objectiveCards,
+      prospect,
+      fate: fateDeck.state,
+      player: playerDeck.state,
+      neutral: opponentDeck.state,
+    });
+  }, [resourceState, objectiveCards, prospect, fateDeck.state, playerDeck.state, opponentDeck.state]);
+
+  const startNewGame = () => {
+    setResourceState(createEmptyResourceState());
+    setObjectiveCards([]);
+    setProspect(null);
+    fateDeck.reset();
+    playerDeck.reset();
+    opponentDeck.reset();
+    setNewGameOpen(false);
+  };
 
   const pictDirectionCount = fateDeck.drawnCards.reduce((counts, { card }) => ({
     ...counts,
@@ -136,7 +165,22 @@ const [prospect, setProspect] = useState<DrawnCard<PlayerCard> | null>(null);
         <AppContainer>
           <AppHeaderContainer>
             <AppPrimaryText>Hadrian's Wall Solo Helper</AppPrimaryText>
+            <AppPrimaryButton onClick={() => setNewGameOpen(true)}>
+              New Game
+            </AppPrimaryButton>
           </AppHeaderContainer>
+          <Dialog open={newGameOpen} onClose={() => setNewGameOpen(false)} aria-labelledby='new-game-title'>
+            <DialogTitle id='new-game-title'>Start a new game?</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                This clears resources, Paths, the Prospect, Neutral placements, and all displayed cards, then reshuffles all three decks.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setNewGameOpen(false)}>Cancel</Button>
+              <Button color='error' onClick={startNewGame}>Start new game</Button>
+            </DialogActions>
+          </Dialog>
           <RoundTrackContainer>
             <RoundReferenceGrid role='region' aria-label='Round reference'>
               {rounds &&
