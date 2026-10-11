@@ -346,3 +346,37 @@ test('a Fate card taken as resources leaves the active invasion totals', async (
   expect(screen.queryByRole('button', { name: 'As Resource' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Discard' })).not.toBeInTheDocument();
 });
+
+test('the PDF p. 20 example of one centre and two right attacks shows 1 centre and 2 right', async () => {
+  const user = userEvent.setup();
+  render(<App />);
+
+  const directions = ['Left', 'Center', 'Right'] as const;
+  const totals = () => Object.fromEntries(
+    directions.map((direction) => [
+      direction,
+      Number(screen.getByText(new RegExp(`^${direction} : \\d+$`)).textContent!.split(' : ')[1]),
+    ]),
+  );
+
+  // Draw in the deck's own order. Keep the first centre attack and the first two right attacks;
+  // discard every other card so the revealed set matches the example.
+  let kept = { Center: 0, Right: 0 };
+  while (kept.Center < 1 || kept.Right < 2) {
+    const before = totals();
+    await user.click(screen.getByRole('button', { name: 'Draw Fate Card' }));
+    const after = totals();
+    const direction = directions.find((key) => after[key] !== before[key]) as 'Left' | 'Center' | 'Right';
+
+    if (direction === 'Center' && kept.Center < 1) {
+      kept = { ...kept, Center: kept.Center + 1 };
+    } else if (direction === 'Right' && kept.Right < 2) {
+      kept = { ...kept, Right: kept.Right + 1 };
+    } else {
+      await user.click(screen.getAllByRole('button', { name: 'Discard' })[0]);
+    }
+  }
+
+  expect(screen.getAllByRole('button', { name: 'Discard' })).toHaveLength(3);
+  expect(totals()).toEqual({ Left: 0, Center: 1, Right: 2 });
+});

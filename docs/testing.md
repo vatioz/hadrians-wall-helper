@@ -31,6 +31,10 @@ confirmation noted below. Tests do not read local rulebook artifacts.
 - [x] The centre-attack and visible right-attack Fate cards from PDF p. 20 are
   checked for direction, Trade Good, gladiator value, and resource quantities.
   Resource comparisons preserve multiplicity without requiring array order.
+- [x] The PDF p. 20 Year 3 example (one centre and two right attacks) is
+  reproduced through the App with a deterministic shuffle and asserted to show
+  one centre and two right attacks. Fate cards are selected by their displayed
+  direction totals, so the test does not depend on shuffle order.
 
 ## Helper Contracts
 
