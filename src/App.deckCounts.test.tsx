@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import App from './App';
@@ -48,7 +48,7 @@ test('clear, discard, resource and reset actions leave every deck count unchange
   expect(screen.getAllByText('Deck: 11/12')).toHaveLength(2);
 });
 
-test('an empty pile shows 0 and the next draw reshuffles it to total minus one', async () => {
+test('an empty Player pile shows 0, disables its draw button, and does not reshuffle', async () => {
   const user = userEvent.setup();
   vi.spyOn(Math, 'random').mockReturnValue(0);
   render(<App />);
@@ -57,8 +57,36 @@ test('an empty pile shows 0 and the next draw reshuffles it to total minus one',
     await user.click(screen.getByRole('button', { name: 'Draw Player Card' }));
   }
   expect(screen.getByText('Deck: 0/12')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Draw Player Card' })).toBeDisabled();
+});
 
-  await user.click(screen.getByRole('button', { name: 'Draw Player Card' }));
-  expect(screen.getByText('Deck: 11/12')).toBeInTheDocument();
-  expect(screen.getByText('Deck: 12/12')).toBeInTheDocument();
+test('an empty Fate pile reshuffles only cards that are not on display', () => {
+  vi.spyOn(Math, 'random').mockReturnValue(0);
+  render(<App />);
+  const drawFate = screen.getByRole('button', { name: 'Draw Fate Card' });
+
+  for (let draw = 0; draw < 48; draw += 1) {
+    fireEvent.click(drawFate);
+  }
+  expect(screen.getByText('Deck: 0/48')).toBeInTheDocument();
+  expect(drawFate).toBeDisabled();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Clear Invasion' }));
+  expect(screen.getByText('Deck: 0/48')).toBeInTheDocument();
+  expect(drawFate).toBeEnabled();
+
+  fireEvent.click(drawFate);
+  expect(screen.getByText('Deck: 47/48')).toBeInTheDocument();
+});
+
+test('an empty Neutral pile shows 0 and disables its draw button', async () => {
+  const user = userEvent.setup();
+  vi.spyOn(Math, 'random').mockReturnValue(0);
+  render(<App />);
+
+  for (let draw = 0; draw < 12; draw += 1) {
+    await user.click(screen.getByRole('button', { name: 'Draw Opponent Card' }));
+  }
+  expect(screen.getByText('Deck: 0/12')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Draw Opponent Card' })).toBeDisabled();
 });

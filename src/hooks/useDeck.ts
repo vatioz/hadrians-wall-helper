@@ -22,6 +22,11 @@ export interface DeckState<Card> {
   nextId: number;
 }
 
+export interface DeckOptions {
+  /** When true, an empty pile reshuffles every card that is not currently displayed. */
+  reshuffleWhenEmpty?: boolean;
+}
+
 function createDeckState<Card>(cards: readonly Card[], random: () => number): DeckState<Card> {
   return {
     remaining: shuffle(cards, random),
@@ -30,16 +35,33 @@ function createDeckState<Card>(cards: readonly Card[], random: () => number): De
   };
 }
 
+function reshufflePile<Card>(cards: readonly Card[], drawn: readonly DrawnCard<Card>[], random: () => number): Card[] {
+  const available = [...cards];
+
+  drawn.forEach(({ card }) => {
+    // Restored state holds copies rather than the original card objects, so match by content.
+    const index = available.findIndex((candidate) => JSON.stringify(candidate) === JSON.stringify(card));
+    if (index >= 0) {
+      available.splice(index, 1);
+    }
+  });
+
+  return shuffle(available, random);
+}
+
 export function useDeck<Card>(
   cards: readonly Card[],
   random: () => number = Math.random,
   initialState?: DeckState<Card>,
+  { reshuffleWhenEmpty = false }: DeckOptions = {},
 ) {
   const [deck, setDeck] = useState<DeckState<Card>>(() => initialState ?? createDeckState(cards, random));
 
   const draw = () => {
     setDeck((current) => {
-      const remaining = current.remaining.length > 0 ? current.remaining : shuffle(cards, random);
+      const remaining = current.remaining.length > 0 || !reshuffleWhenEmpty
+        ? current.remaining
+        : reshufflePile(cards, current.drawn, random);
 
       if (remaining.length === 0) {
         return current;
@@ -80,6 +102,7 @@ export function useDeck<Card>(
     drawnCards: deck.drawn,
     remainingCount: deck.remaining.length,
     totalCount: cards.length,
+    canDraw: deck.remaining.length > 0 || (reshuffleWhenEmpty && cards.length > deck.drawn.length),
     draw,
     clear,
     discard,

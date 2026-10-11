@@ -20,13 +20,14 @@ test('shuffle can select the current position at the upper end of the random ran
 
 test('totalCount stays at the full pile size while remainingCount falls and reshuffles', () => {
   const source = Object.freeze(['Fighter', 'Ranger']);
-  const { result } = renderHook(() => useDeck(source, () => 0));
+  const { result } = renderHook(() => useDeck(source, () => 0, undefined, { reshuffleWhenEmpty: true }));
 
   expect(result.current.totalCount).toBe(2);
   act(() => result.current.draw());
   act(() => result.current.draw());
   expect(result.current.remainingCount).toBe(0);
   expect(result.current.totalCount).toBe(2);
+  act(() => result.current.clear());
   act(() => result.current.draw());
   expect(result.current.remainingCount).toBe(1);
   expect(result.current.totalCount).toBe(2);
@@ -108,8 +109,9 @@ test('Player, Neutral, and Fate hooks keep independent draw piles and displays',
     result.current.player.draw();
   });
 
-  expect(result.current.player.drawnCards.map((entry) => entry.card)).toEqual(['second', 'first', 'third', 'second']);
-  expect(result.current.player.remainingCount).toBe(2);
+  expect(result.current.player.drawnCards.map((entry) => entry.card)).toEqual(['first', 'third', 'second']);
+  expect(result.current.player.remainingCount).toBe(0);
+  expect(result.current.player.canDraw).toBe(false);
   expect(result.current.neutral.drawnCards).toEqual([]);
   expect(result.current.neutral.remainingCount).toBe(3);
   expect(result.current.fate.drawnCards).toEqual([]);
@@ -122,7 +124,7 @@ test('Player, Neutral, and Fate hooks keep independent draw piles and displays',
   });
 
   expect(result.current.player.drawnCards).toEqual([]);
-  expect(result.current.player.remainingCount).toBe(2);
+  expect(result.current.player.remainingCount).toBe(0);
   expect(result.current.neutral.drawnCards.map((entry) => entry.card)).toEqual(['second']);
   expect(result.current.fate.drawnCards.map((entry) => entry.card)).toEqual(['second']);
 });
@@ -143,9 +145,9 @@ test('clearing displayed cards does not replenish the draw pile', () => {
   expect(result.current.remainingCount).toBe(1);
 });
 
-test('a pile is exhausted before the next draw reshuffles it, without repeating an instance within a cycle', () => {
+test('a reshuffling pile is exhausted before the next draw reshuffles it, without repeating an instance within a cycle', () => {
   const source = Object.freeze(['Fighter', 'Ranger', 'Trainer']);
-  const { result } = renderHook(() => useDeck(source, () => 0));
+  const { result } = renderHook(() => useDeck(source, () => 0, undefined, { reshuffleWhenEmpty: true }));
 
   act(() => {
     result.current.draw();
@@ -158,10 +160,69 @@ test('a pile is exhausted before the next draw reshuffles it, without repeating 
   const firstCycleIds = result.current.drawnCards.map((entry) => entry.id);
   expect(new Set(firstCycleIds).size).toBe(3);
 
+  act(() => result.current.clear());
   act(() => result.current.draw());
 
-  expect(result.current.drawnCards.map((entry) => entry.card)).toEqual(['Ranger', 'Fighter', 'Trainer', 'Ranger']);
+  expect(result.current.drawnCards.map((entry) => entry.card)).toEqual(['Ranger']);
   expect(result.current.remainingCount).toBe(2);
   expect(firstCycleIds).not.toContain(result.current.drawnCards[0].id);
   expect(source).toEqual(['Fighter', 'Ranger', 'Trainer']);
+});
+
+test('a reshuffle excludes cards still on display and returns only cards that left display', () => {
+  const source = Object.freeze(['Fighter', 'Ranger', 'Trainer']);
+  const { result } = renderHook(() => useDeck(source, () => 0, undefined, { reshuffleWhenEmpty: true }));
+
+  act(() => {
+    result.current.draw();
+    result.current.draw();
+    result.current.draw();
+  });
+  const [newest, middle, oldest] = result.current.drawnCards;
+
+  act(() => result.current.discard(newest.id));
+  expect(result.current.canDraw).toBe(true);
+
+  act(() => result.current.draw());
+
+  expect(result.current.drawnCards.map((entry) => entry.card)).toEqual([newest.card, middle.card, oldest.card]);
+  expect(result.current.drawnCards[1]).toBe(middle);
+  expect(result.current.drawnCards[2]).toBe(oldest);
+  expect(result.current.drawnCards[0].id).not.toBe(newest.id);
+  expect(result.current.remainingCount).toBe(0);
+  expect(result.current.canDraw).toBe(false);
+});
+
+test('a reshuffling pile cannot draw while every card is still on display', () => {
+  const source = Object.freeze(['Fighter', 'Ranger']);
+  const { result } = renderHook(() => useDeck(source, () => 0, undefined, { reshuffleWhenEmpty: true }));
+
+  act(() => {
+    result.current.draw();
+    result.current.draw();
+  });
+  const before = result.current.drawnCards;
+
+  expect(result.current.canDraw).toBe(false);
+  act(() => result.current.draw());
+
+  expect(result.current.drawnCards).toBe(before);
+  expect(result.current.remainingCount).toBe(0);
+});
+
+test('a pile without reshuffling reports it cannot draw once empty and never refills', () => {
+  const source = Object.freeze(['Fighter', 'Ranger']);
+  const { result } = renderHook(() => useDeck(source, () => 0));
+
+  act(() => {
+    result.current.draw();
+    result.current.draw();
+  });
+  act(() => result.current.clear());
+
+  expect(result.current.canDraw).toBe(false);
+  act(() => result.current.draw());
+
+  expect(result.current.drawnCards).toEqual([]);
+  expect(result.current.remainingCount).toBe(0);
 });

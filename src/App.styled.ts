@@ -9,6 +9,10 @@ export const AppPrimaryButton = styled(Button)`
   &:hover {
     background-color: ${(props) => props.theme.palette.app.brandHover} !important;
   }
+  &:disabled {
+    background-color: rgba(0, 0, 0, 0.12) !important;
+    color: rgba(0, 0, 0, 0.38) !important;
+  }
 `;
 
 export const AppOutlinePrimary = styled(Button)`

@@ -83,13 +83,12 @@ test.each([
   expect(errors).not.toHaveBeenCalled();
 });
 
-test('retained Paths preserve mounted scoring content across deck cycles and respect the six-Path cap', async () => {
+test('retained Paths preserve mounted scoring content and respect the six-Path cap', async () => {
   const user = userEvent.setup();
   vi.spyOn(Math, 'random').mockReturnValue(0);
   const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
   render(<App />);
   const draw = screen.getByRole('button', { name: 'Draw Player Card' });
-  const clear = screen.getByRole('button', { name: 'Clear Player Cards' });
   await user.click(draw);
   await user.click(screen.getByRole('button', { name: 'As Path' }));
   const originalName = screen.getByText('Engineer');
@@ -101,37 +100,26 @@ test('retained Paths preserve mounted scoring content across deck cycles and res
   };
   expect(errors).not.toHaveBeenCalled();
 
-  for (let remaining = 11; remaining > 0; remaining -= 1) {
-    fireEvent.click(draw);
-    fireEvent.click(clear);
-  }
-  await user.click(draw);
-  errors.mockClear();
-  await user.click(screen.getByRole('button', { name: 'As Path' }));
-  const names = screen.getAllByText('Engineer');
-  expect(names).toHaveLength(2);
-  expect(names[0]).toBe(originalName);
-  expectOriginalScores();
-  expect(errors).not.toHaveBeenCalled();
-
   await user.click(screen.getByRole('button', { name: 'Draw Fate Card' }));
   await user.click(within(screen.getByText('Black').parentElement!).getByRole('button', { name: '+' }));
-  expect(screen.getAllByText('Engineer')).toHaveLength(2);
-  names.forEach((name, index) => expect(screen.getAllByText('Engineer')[index]).toBe(name));
+  expect(originalName).toBeInTheDocument();
   expectOriginalScores();
+  expect(errors).not.toHaveBeenCalled();
   await user.click(screen.getByRole('button', { name: 'Zero Resources' }));
 
-  for (let paths = 2; paths < 6; paths += 1) {
+  for (let paths = 2; paths <= 6; paths += 1) {
     fireEvent.click(draw);
     fireEvent.click(screen.getByRole('button', { name: 'As Path' }));
   }
-  await user.click(draw);
+  expect(screen.getByText('Deck: 6/12')).toBeInTheDocument();
+  fireEvent.click(draw);
   const seventhPath = screen.getByRole('button', { name: 'As Path' });
   expect(seventhPath).toBeDisabled();
   fireEvent.click(seventhPath);
   expect(seventhPath).toBeInTheDocument();
-  expect(screen.getAllByText('Engineer')).toHaveLength(2);
-  names.forEach((name, index) => expect(screen.getAllByText('Engineer')[index]).toBe(name));
+  expect(originalName).toBeInTheDocument();
+  expectOriginalScores();
+  expect(errors).not.toHaveBeenCalled();
   ['Black', 'Blue', 'Purple', 'Yellow', 'Brick'].forEach((label) => {
     expect(within(screen.getByText(label).parentElement!).getByText('0')).toBeInTheDocument();
   });

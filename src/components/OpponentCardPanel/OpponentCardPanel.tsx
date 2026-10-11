@@ -10,6 +10,7 @@ interface Props {
   clearOpponentCards: () => void;
   opponentCards: DrawnCard<PlayerCard>[];
   randomOpponentCard: () => void;
+  canDrawOpponentCard: boolean;
   deckRemaining: number;
   deckTotal: number;
   neutralUses: Record<number, NeutralCardUsage>;
@@ -22,6 +23,7 @@ const OpponentCardPanel: React.FC<Props> = ({
   clearOpponentCards,
   opponentCards,
   randomOpponentCard,
+  canDrawOpponentCard,
   deckRemaining,
   deckTotal,
   neutralUses,
@@ -41,7 +43,7 @@ const OpponentCardPanel: React.FC<Props> = ({
           <AppPrimaryButton onClick={clearOpponentCards}>Clear Neutral Cards</AppPrimaryButton>
         </Tooltip>
       </Grid>
-      <AppPrimaryButton onClick={randomOpponentCard}>
+      <AppPrimaryButton onClick={randomOpponentCard} disabled={!canDrawOpponentCard}>
         Draw Opponent Card
       </AppPrimaryButton>
       <div role='status'>Deck: {deckRemaining}/{deckTotal}</div>
