@@ -41,6 +41,11 @@ confirmation noted below. Tests do not read local rulebook artifacts.
   `Line`, `Square`, `T`, `L`, and `S` vocabulary. Valid labels alone do not
   establish that each unseen printed pattern was transcribed correctly.
 
+- [x] Manual resource `-` stops at zero and never displays a negative count
+  (helper control, not a game rule). Covered by a real App regression.
+- [x] A Fate card taken as resources leaves the active invasion totals and its
+  controls. Covered by a real App regression.
+
 ## Deck Integrity (Issue #4)
 
 - [x] A copied Fisher-Yates shuffle preserves the source and card multiplicity.
@@ -73,9 +78,11 @@ focused tests in [useDeck.test.ts](../src/hooks/useDeck.test.ts).
 
 ## Remaining Phase 1 Gaps
 
-- [ ] Easy, Medium, Hard, and Valour values for Years 1, 2, 4, 5, and 6
-  (20 values). The full-board illustrations on PDF pp. 3 and 5 are too small
-  for a reliable transcription; a clearer Player-board reference is needed.
+- [x] Easy, Medium, Hard, and Valour values for Years 1 through 6 were read
+  from the year-track flags on PDF p. 5 at high magnification and asserted in
+  [rounds.test.ts](../src/settings/rounds.test.ts). Years 1, 2, 4, 5, and 6 are
+  read from pixels, not printed text, so a physical-board spot check is still
+  advisable.
 - [ ] A complete audit of all Player/Neutral resource rewards, Trade Goods,
   Scouting Patterns, and all Fate faces and their multiplicities. The illustrated
   examples and field-domain checks above are not a complete card-face audit.

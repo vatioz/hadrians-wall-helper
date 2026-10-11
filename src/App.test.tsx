@@ -317,3 +317,33 @@ test('holding a cleanup button exposes its hint on touch without clearing cards'
   fireEvent.touchEnd(control, { touches: [], changedTouches: [touch] });
   await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(), { timeout: 2500 });
 });
+
+test('manual resource controls stop at zero and never show a negative count', async () => {
+  const user = userEvent.setup();
+  render(<App />);
+
+  const counter = within(screen.getByText('Brick').parentElement!);
+  await user.click(counter.getByRole('button', { name: '-' }));
+  await user.click(counter.getByRole('button', { name: '-' }));
+  expect(counter.getByText('0')).toBeInTheDocument();
+
+  await user.click(counter.getByRole('button', { name: '+' }));
+  await user.click(counter.getByRole('button', { name: '-' }));
+  await user.click(counter.getByRole('button', { name: '-' }));
+  expect(counter.getByText('0')).toBeInTheDocument();
+  expect(screen.queryByText('-1')).not.toBeInTheDocument();
+});
+
+test('a Fate card taken as resources leaves the active invasion totals', async () => {
+  const user = userEvent.setup();
+  vi.spyOn(Math, 'random').mockReturnValue(0);
+  render(<App />);
+
+  await user.click(screen.getByRole('button', { name: 'Draw Fate Card' }));
+  expect(screen.getByText('Left : 1')).toBeInTheDocument();
+
+  await user.click(screen.getByRole('button', { name: 'As Resource' }));
+  expect(screen.getByText('Left : 0')).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'As Resource' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Discard' })).not.toBeInTheDocument();
+});
