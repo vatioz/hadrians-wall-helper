@@ -84,9 +84,9 @@ focused tests in [useDeck.test.ts](../src/hooks/useDeck.test.ts).
 
 - [x] Easy, Medium, Hard, and Valour values for Years 1 through 6 were read
   from the year-track flags on PDF p. 5 at high magnification and asserted in
-  [rounds.test.ts](../src/settings/rounds.test.ts). Years 1, 2, 4, 5, and 6 are
-  read from pixels, not printed text, so a physical-board spot check is still
-  advisable.
+  [rounds.test.ts](../src/settings/rounds.test.ts). Years 1, 2, 4, 5, and 6 were
+  read from pixels, not printed text; the values were then confirmed against
+  the physical board by the project owner.
 - [ ] A complete audit of all Player/Neutral resource rewards, Trade Goods,
   Scouting Patterns, and all Fate faces and their multiplicities. The illustrated
   examples and field-domain checks above are not a complete card-face audit.
