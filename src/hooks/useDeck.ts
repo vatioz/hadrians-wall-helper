@@ -16,12 +16,26 @@ export interface DrawnCard<Card> {
   card: Card;
 }
 
-export function useDeck<Card>(cards: readonly Card[], random: () => number = Math.random) {
-  const [deck, setDeck] = useState(() => ({
+export interface DeckState<Card> {
+  remaining: Card[];
+  drawn: DrawnCard<Card>[];
+  nextId: number;
+}
+
+function createDeckState<Card>(cards: readonly Card[], random: () => number): DeckState<Card> {
+  return {
     remaining: shuffle(cards, random),
-    drawn: [] as DrawnCard<Card>[],
+    drawn: [],
     nextId: 0,
-  }));
+  };
+}
+
+export function useDeck<Card>(
+  cards: readonly Card[],
+  random: () => number = Math.random,
+  initialState?: DeckState<Card>,
+) {
+  const [deck, setDeck] = useState<DeckState<Card>>(() => initialState ?? createDeckState(cards, random));
 
   const draw = () => {
     setDeck((current) => {
@@ -57,7 +71,12 @@ export function useDeck<Card>(cards: readonly Card[], random: () => number = Mat
     }));
   };
 
+  const reset = () => {
+    setDeck(createDeckState(cards, random));
+  };
+
   return {
+    state: deck,
     drawnCards: deck.drawn,
     remainingCount: deck.remaining.length,
     totalCount: cards.length,
@@ -65,5 +84,6 @@ export function useDeck<Card>(cards: readonly Card[], random: () => number = Mat
     clear,
     discard,
     sort,
+    reset,
   };
 }

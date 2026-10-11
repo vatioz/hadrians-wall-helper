@@ -128,3 +128,17 @@ The missing independent references and incomplete Phase 3 work still leave #12 o
 Verified on 2026-10-07: the full test command passed with all 63 tests passing
 and none skipped; the production build compiled successfully. Existing retained
 Path list-key and stale browser-data warnings remain outside this change.
+## Session Persistence (Issue #5)
+
+- [x] Reloading restores resources, Paths, Prospect, displayed Fate/Player/Neutral
+  draws, paid Neutral placements, and each deck's remaining order and draw IDs.
+  A reload does not re-award the Prospect or refill a cleared Fate pile.
+- [x] Corrupted JSON, an unsupported version, a negative resource count, and a
+  repeated Fate pile card start a fresh game. Other invalid shapes are rejected
+  by the parser in [gameSession.ts](../src/gameSession.ts).
+- [x] Storage that throws on read or write leaves play and New Game working.
+- [x] New Game asks for confirmation. Cancel changes nothing; confirming resets
+  the session and the reset is saved.
+
+These checks are in [App.persistence.test.tsx](../src/App.persistence.test.tsx),
+with the storage format in [gameSession.ts](../src/gameSession.ts).
