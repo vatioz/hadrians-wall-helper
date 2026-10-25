@@ -52,8 +52,10 @@ displayed; discarded Fate cards return to the pool.
 
 ### Prerequisites
 
-- Node.js 24 LTS (the development container includes it)
+- Node.js 26.12.1 or later within 26.x (`.nvmrc` pins the CI runtime; the development container uses Node 26 and enforces the package engine requirements)
 - npm
+
+After changing the development-container runtime, rebuild the container to apply the update.
 
 ### Installation
 

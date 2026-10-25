@@ -30,6 +30,22 @@ import OpponentCardPanel from './components/OpponentCardPanel';
 import { DrawnCard, useDeck } from './hooks/useDeck';
 import { muiTheme } from './theme';
 import { loadGameSession, ResourceState, saveGameSession } from './gameSession';
+import { PROTOTYPE_VARIANTS, PrototypeAppProps, PrototypeVariantKey } from './prototype/prototype.types';
+import { PrototypeSwitcher } from './prototype/PrototypeSwitcher';
+import { VariantABottomTabWorkspace } from './prototype/VariantABottomTabWorkspace';
+import { VariantBYearStepFlow } from './prototype/VariantBYearStepFlow';
+import { VariantCTabletSplitRails } from './prototype/VariantCTabletSplitRails';
+import { VariantDCompactAccordionSheet } from './prototype/VariantDCompactAccordionSheet';
+
+// PROTOTYPE PLAN: Four mobile/tablet layout variants (A, B, C, D) + 'current' baseline
+// on the existing '/' route, switchable via `?variant=` and the floating bottom bar.
+const getInitialVariant = (): PrototypeVariantKey => {
+  const raw = new URLSearchParams(window.location.search).get('variant');
+  if (raw && PROTOTYPE_VARIANTS.some((v) => v.key === raw)) {
+    return raw as PrototypeVariantKey;
+  }
+  return 'A';
+};
 
 const createEmptyResourceState = (): ResourceState => ({
   amount: { black: 0, blue: 0, purple: 0, yellow: 0, brick: 0 },
@@ -38,6 +54,7 @@ const createEmptyResourceState = (): ResourceState => ({
 
 const App = () => {
   const [initialSession] = useState(loadGameSession);
+  const [variant, setVariant] = useState<PrototypeVariantKey>(getInitialVariant);
   const fateDeck = useDeck(fateCards, Math.random, initialSession?.fate, { reshuffleWhenEmpty: true });
   const playerDeck = useDeck(playerCards, Math.random, initialSession?.player);
   const opponentDeck = useDeck(opponentCards, Math.random, initialSession?.neutral);
@@ -48,6 +65,13 @@ const App = () => {
   );
   const [newGameOpen, setNewGameOpen] = useState(false);
   const resourceAmount = resourceState.amount;
+
+  const selectVariant = (next: PrototypeVariantKey) => {
+    setVariant(next);
+    const url = new URL(window.location.href);
+    url.searchParams.set('variant', next);
+    window.history.replaceState({}, '', url.toString());
+  };
 
   useEffect(() => {
     saveGameSession({
@@ -158,9 +182,98 @@ const App = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  const extraInvasionDraws = opponentDeck.drawnCards.reduce((total, { id }) => {
+    const usage = resourceState.neutralUses[id];
+    return total + (usage ? usage.resources + usage.soldiers : 0);
+  }, 0);
+
+  const loadDemoMidYear = () => {
+    setObjectiveCards([
+      { id: 900, card: playerCards[1] },
+      { id: 901, card: playerCards[2] },
+      { id: 902, card: playerCards[3] },
+    ]);
+    setProspect({ id: 903, card: playerCards[0] });
+    setResourceState({
+      amount: { black: 3, blue: 2, purple: 2, yellow: 4, brick: 3 },
+      neutralUses: {},
+    });
+    if (playerDeck.drawnCards.length === 0) {
+      playerDeck.draw();
+      playerDeck.draw();
+    }
+    if (opponentDeck.drawnCards.length === 0) {
+      opponentDeck.draw();
+      opponentDeck.draw();
+    }
+    if (fateDeck.drawnCards.length === 0) {
+      fateDeck.draw();
+      fateDeck.draw();
+      fateDeck.draw();
+    }
+  };
+
+  const prototypeProps: PrototypeAppProps = {
+    rounds,
+    resourceAmount,
+    neutralUses: resourceState.neutralUses,
+    extraInvasionDraws,
+    pictDirectionCount,
+    objectiveCards,
+    prospect,
+    playerDrawn: playerDeck.drawnCards,
+    playerRemaining: playerDeck.remainingCount,
+    playerTotal: playerDeck.totalCount,
+    canDrawPlayer: playerDeck.canDraw,
+    opponentDrawn: opponentDeck.drawnCards,
+    opponentRemaining: opponentDeck.remainingCount,
+    opponentTotal: opponentDeck.totalCount,
+    canDrawOpponent: opponentDeck.canDraw,
+    fateDrawn: fateDeck.drawnCards,
+    fateRemaining: fateDeck.remainingCount,
+    fateTotal: fateDeck.totalCount,
+    canDrawFate: fateDeck.canDraw,
+    onOpenNewGame: () => setNewGameOpen(true),
+    onLoadDemoMidYear: loadDemoMidYear,
+    onResetResources: resetResourceAmount,
+    onChangeResource: changeResourceAmountByKey,
+    onDrawPlayer: playerDeck.draw,
+    onClearPlayer: clearPlayerCards,
+    onAddObjective: addObjectiveCard,
+    onAddResourceFromPlayer: addResourceFromPlayerCard,
+    onDrawOpponent: opponentDeck.draw,
+    onClearOpponent: clearNeutralCards,
+    onUseNeutral: useNeutralCard,
+    onDrawFate: fateDeck.draw,
+    onClearFate: fateDeck.clear,
+    onSortFate: sortByArrow,
+    onAddResourceFromFate: addResourceFromFateCard,
+    onDiscardFate: fateDeck.discard,
+  };
+
+  const stateSummary = `Paths ${objectiveCards.length}/6 · Player ${playerDeck.drawnCards.length} · Neutral ${opponentDeck.drawnCards.length} (+${extraInvasionDraws}) · Fate ${fateDeck.drawnCards.length}`;
+
   return (
     <StyledThemeProvider theme={muiTheme}>
     <ThemeProvider theme={muiTheme}>
+      <Dialog open={newGameOpen} onClose={() => setNewGameOpen(false)} aria-labelledby='new-game-title'>
+        <DialogTitle id='new-game-title'>Start a new game?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This clears resources, Paths, the Prospect, Neutral placements, and all displayed cards, then reshuffles all three decks.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNewGameOpen(false)}>Cancel</Button>
+          <Button color='error' onClick={startNewGame}>Start new game</Button>
+        </DialogActions>
+      </Dialog>
+
+      {variant === 'A' && <VariantABottomTabWorkspace {...prototypeProps} />}
+      {variant === 'B' && <VariantBYearStepFlow {...prototypeProps} />}
+      {variant === 'C' && <VariantCTabletSplitRails {...prototypeProps} />}
+      {variant === 'D' && <VariantDCompactAccordionSheet {...prototypeProps} />}
+      {variant === 'current' && (
       <AppGradientWrapper>
         <AppContainer>
           <AppHeaderContainer>
@@ -169,18 +282,6 @@ const App = () => {
               New Game
             </AppPrimaryButton>
           </AppHeaderContainer>
-          <Dialog open={newGameOpen} onClose={() => setNewGameOpen(false)} aria-labelledby='new-game-title'>
-            <DialogTitle id='new-game-title'>Start a new game?</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                This clears resources, Paths, the Prospect, Neutral placements, and all displayed cards, then reshuffles all three decks.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setNewGameOpen(false)}>Cancel</Button>
-              <Button color='error' onClick={startNewGame}>Start new game</Button>
-            </DialogActions>
-          </Dialog>
           <RoundTrackContainer>
             <RoundReferenceGrid role='region' aria-label='Round reference'>
               {rounds &&
@@ -382,6 +483,14 @@ const App = () => {
           </Grid>
         </AppContainer>
       </AppGradientWrapper>
+      )}
+
+      <PrototypeSwitcher
+        current={variant}
+        onSelect={selectVariant}
+        onLoadDemoMidYear={loadDemoMidYear}
+        stateSummary={stateSummary}
+      />
     </ThemeProvider>
     </StyledThemeProvider>
   );
